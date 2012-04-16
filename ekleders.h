@@ -2,6 +2,7 @@
 #define EKLEDERS_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui {
     class ekleDers;
@@ -15,6 +16,7 @@ public:
     explicit ekleDers(QWidget *parent = 0);
     ~ekleDers();
     Ui::ekleDers *ui;
+    void keyPressEvent(QKeyEvent *e);
     void uyari(int i);
 
 public slots:

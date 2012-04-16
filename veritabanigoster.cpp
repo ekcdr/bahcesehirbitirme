@@ -9,6 +9,14 @@ veritabaniGoster::veritabaniGoster(QWidget *parent) :
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(kapat()));
 }
 
+void veritabaniGoster::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void veritabaniGoster::kapat()
 {
     close();

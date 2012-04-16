@@ -14,6 +14,14 @@ ekleDers::ekleDers(QWidget *parent) :
     this->setWindowTitle("Ders Ekle");
 }
 
+void ekleDers::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void ekleDers::kapat()
 {
     close();

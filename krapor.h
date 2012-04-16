@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QMessageBox>
+#include <QKeyEvent>
 #include "charts/barchartplotter.h"
 #include "charts/axisbase.h"
 
@@ -21,16 +22,21 @@ public:
     explicit kRapor(QWidget *parent = 0);
     ~kRapor();
     Ui::kRapor *ui;
+    void keyPressEvent(QKeyEvent *e);
     bool ilkAcilis;//cbsinav'a sinavlar eklenirken fonk a girmesin
     QString dersid;
     QStandardItemModel *viewCizelge;
+    QStandardItemModel *sonuc2Yuzdeler;
     void yukleme();
+    void yukleme2();
     void kendiligindenRapor1();
     void kendiligindenRapor2();
     void sonucRapor1();
     void sonucRapor2();
     void cizelgeYukleme();
-    void cizelgeOlustur(int,QStringList);
+    void cizelgeViewOlustur(int,QStringList);
+    void konulariEkle();
+    void cizelgeOlustur();
     bool denetle();
 
 public slots:
@@ -39,6 +45,7 @@ public slots:
     void raporOlustur2();
     void sinavDegisti();
     void raporTuru(int);
+    void rbCizelge();
 
 private:
 

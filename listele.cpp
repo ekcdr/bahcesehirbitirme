@@ -14,6 +14,14 @@ listele::listele(QWidget *parent) :
     ui->tableListe->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 }
 
+void listele::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void listele::kapat()
 {
     close();

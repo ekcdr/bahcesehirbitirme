@@ -2,6 +2,7 @@
 #define LISTELE_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui {
 class listele;
@@ -15,6 +16,7 @@ public:
     explicit listele(QWidget *parent = 0);
     ~listele();
     Ui::listele *ui;
+    void keyPressEvent(QKeyEvent *e);
     void yuklemeOgrenci();
     void yuklemeSinav();
 

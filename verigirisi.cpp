@@ -9,6 +9,14 @@ veriGirisi::veriGirisi(QWidget *parent) :
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(kapat()));
 }
 
+void veriGirisi::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void veriGirisi::kapat()
 {
     close();

@@ -18,6 +18,14 @@ ekleSinav::ekleSinav(QWidget *parent) :
     yukleme();
 }
 
+void ekleSinav::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void ekleSinav::kapat()
 {
     close();

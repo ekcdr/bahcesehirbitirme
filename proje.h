@@ -16,6 +16,7 @@
 #include "eklesonuc.h"
 #include "listele.h"
 #include "krapor.h"
+#include "sinavistatistik.h"
 
 namespace Ui {
     class proje;
@@ -32,6 +33,7 @@ public:
     void ogrenciSayisiBul(QString ders); //dersi alan öğrenci sayısını döndürüyor.
     void sinavSayisiBul(QString ders); //dersin sinav sayısını döndürüyor.
     void kalinFont(QTableWidgetItem *itm);
+    void closeEvent(QCloseEvent *event);
 
 public slots:
     void tamamOgrenci();
@@ -45,7 +47,7 @@ public slots:
     void dersleriYazdir(); //dersleri ana ekrana yazdırıyor
     void raporDers();
     void filtreSinav();
-    void raporOlustur();
+    //void raporOlustur();
     void raporOlustur2();
     void veritabani();
     void veritabaniGuncelle();
@@ -56,6 +58,7 @@ public slots:
     void sonucKapat();
     void krapor();
     void konuEtkin();
+    void sinavGrafikGoster();
 
 private:
     Ui::proje *ui;
@@ -79,6 +82,7 @@ private:
     ekleSonuc formEkleSonuc;
     listele formListele;
     kRapor formKRapor;
+    sinavIstatistik formSinavIstatistik;
 };
 
 #endif // PROJE_H

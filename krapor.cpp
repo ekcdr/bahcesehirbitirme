@@ -13,6 +13,14 @@ kRapor::kRapor(QWidget *parent) :
     yukleme();
 }
 
+void kRapor::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 bool kRapor::denetle()
 {
     if(ui->txtYuzdeAlt->text()!=QString::number(ui->txtYuzdeAlt->text().toDouble()) || ui->txtYuzdeUst->text()!=QString::number(ui->txtYuzdeUst->text().toDouble()))
@@ -31,6 +39,24 @@ void kRapor::raporOlustur2()
     }
 }
 
+void kRapor::konulariEkle()//grafiğin yanındaki table a konuları ekliyor
+{
+    ui->tableGrafikKonular->setRowCount(0);
+    QSqlQuery query;
+    query.exec(QString("SELECT konuisim FROM soru WHERE sinavid=(select sinavid from derssinav where dersid='%1')").arg(dersid));
+    while(query.next())
+    {
+        const int currentRow = ui->tableGrafikKonular->rowCount();
+        ui->tableGrafikKonular->setRowCount(currentRow + 1);
+        QRadioButton *rb=new QRadioButton(query.value(0).toString());
+        ui->tableGrafikKonular->setCellWidget(currentRow,0,rb);
+        connect(rb,SIGNAL(clicked()),this,SLOT(rbCizelge()));
+    }
+    QRadioButton *rb=qobject_cast<QRadioButton *>(ui->tableGrafikKonular->cellWidget(0,0));
+    rb->setChecked(true);
+    rbCizelge();
+}
+
 void kRapor::raporTuru(int a)
 {
     if(a==0)
@@ -38,26 +64,47 @@ void kRapor::raporTuru(int a)
         ui->btnOlustur->setEnabled(false);
         ui->txtYuzdeAlt->setEnabled(false);
         ui->txtYuzdeUst->setEnabled(false);
+        ui->txtYuzde->setEnabled(false);
         ui->lblAlt->setEnabled(false);
         ui->lblUst->setEnabled(false);
+        ui->lblYuzde->setEnabled(false);
+        ui->cbKistasYuzde->setEnabled(false);
+        ui->tableGrafikKonular->hide();
     }
     else if(a==1 || a==2)
     {
         ui->txtYuzdeAlt->setEnabled(false);
         ui->txtYuzdeUst->setEnabled(false);
+        ui->txtYuzde->setEnabled(false);
         ui->btnOlustur->setEnabled(true);
         ui->lblAlt->setEnabled(false);
         ui->lblUst->setEnabled(false);
+        ui->lblYuzde->setEnabled(false);
+        ui->cbKistasYuzde->setEnabled(false);
+        ui->tableGrafikKonular->hide();
+        if(a==2)
+        {
+            ui->tableGrafikKonular->show();
+            konulariEkle();
+        }
     }
     else if(a==3 || a==4)
     {
         ui->btnOlustur->setEnabled(true);
         ui->txtYuzdeAlt->setEnabled(true);
         ui->txtYuzdeUst->setEnabled(true);
+        ui->txtYuzde->setEnabled(true);
         ui->lblAlt->setEnabled(true);
         ui->lblUst->setEnabled(true);
+        ui->lblYuzde->setEnabled(true);
+        ui->cbKistasYuzde->setEnabled(true);
+        ui->tableGrafikKonular->hide();
+        if(a==4)
+        {
+            ui->tableGrafikKonular->show();
+            konulariEkle();
+        }
     }
-
 }
 
 void kRapor::kapat()
@@ -73,13 +120,58 @@ void kRapor::sinavDegisti()
     ui->cbKistas->setCurrentIndex(0);
 }
 
-void kRapor::cizelgeOlustur(int tur, QStringList liste)
+void kRapor::rbCizelge()//rb değiştiğinde cizelgelisti güncelliyor
+{
+    viewCizelge->setColumnCount(0);
+    QString seciliKonu;
+    QSqlQuery query;
+
+    query.exec(QString("select sorusayisi from sinav,derssinav where sinav.sinavid=derssinav.sinavid and sinavisim='%1' and dersid='%2'").arg(ui->cbSinav->currentText()).arg(dersid));
+    query.next();
+    for(int m=0;m<query.value(0).toInt();m++)
+    {
+        QRadioButton *rb=qobject_cast<QRadioButton *>(ui->tableGrafikKonular->cellWidget(m,0));
+        if(rb->isChecked()==true)
+        {
+            seciliKonu=rb->text();
+            break;
+        }
+    }
+
+    for(int i=0;i<sonuc2Yuzdeler->rowCount();i++)
+    {
+        if(sonuc2Yuzdeler->data(sonuc2Yuzdeler->index(i,0),Qt::DisplayRole).toString()==seciliKonu)
+        {
+            QStringList cizelgeList;
+            cizelgeList.append(sonuc2Yuzdeler->data(sonuc2Yuzdeler->index(i,1),Qt::DisplayRole).toString());
+            cizelgeList.append(sonuc2Yuzdeler->data(sonuc2Yuzdeler->index(i,2),Qt::DisplayRole).toString());
+            cizelgeList.append(sonuc2Yuzdeler->data(sonuc2Yuzdeler->index(i,3),Qt::DisplayRole).toString());
+            if(!cizelgeList.isEmpty())
+            {
+                cizelgeViewOlustur(4,cizelgeList);
+            }
+        }
+    }
+    cizelgeOlustur();
+}
+
+void kRapor::cizelgeOlustur()
+{
+    ui->cizelge->setModel(viewCizelge);
+    ui->cizelge->setBarScale(0.85);
+    ui->cizelge->setBarType(QSint::BarChartPlotter::Columns);
+    ui->cizelge->repaint();
+    ui->cizelge->show();
+}
+
+void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye cizelgede gösterilecek verileri yazıyor
 {   //1:krapor1
     //2:krapor2
     //3:sonucrapor1
     //4:sonucrapor2
     if(tur==1)
     {
+        ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
         ui->lbl1->show();
         ui->lbl2->show();
         ui->lbl3->show();
@@ -96,7 +188,6 @@ void kRapor::cizelgeOlustur(int tur, QStringList liste)
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"0-26"<<"26-51"<<"51-76"<<"76-101");
         ui->tableViewCizelge->setModel(viewCizelge);
 
-        ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
         viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
         viewCizelge->setHeaderData(1, Qt::Vertical, Qt::green, Qt::BackgroundRole);
         viewCizelge->setHeaderData(2, Qt::Vertical, Qt::blue, Qt::BackgroundRole);
@@ -108,15 +199,10 @@ void kRapor::cizelgeOlustur(int tur, QStringList liste)
         viewCizelge->setData(viewCizelge->index(1,viewCizelge->columnCount()-1),liste.at(2));
         viewCizelge->setData(viewCizelge->index(2,viewCizelge->columnCount()-1),liste.at(3));
         viewCizelge->setData(viewCizelge->index(3,viewCizelge->columnCount()-1),liste.at(4));
-
-        ui->cizelge->setModel(viewCizelge);
-        ui->cizelge->setBarScale(0.85);
-        ui->cizelge->setBarType(QSint::BarChartPlotter::Columns);
-        ui->cizelge->repaint();
-        ui->cizelge->show();
     }
     else if(tur==3)
     {
+        ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
         ui->lbl1->show();
         ui->lbl2->show();
         ui->lbl1p->show();
@@ -127,7 +213,6 @@ void kRapor::cizelgeOlustur(int tur, QStringList liste)
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"başarısız"<<"başarılı");
         ui->tableViewCizelge->setModel(viewCizelge);
 
-        ui->cizelge->hide();
         viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
         viewCizelge->setHeaderData(1, Qt::Vertical, Qt::green, Qt::BackgroundRole);
 
@@ -135,12 +220,31 @@ void kRapor::cizelgeOlustur(int tur, QStringList liste)
         viewCizelge->setHeaderData(viewCizelge->columnCount()-1, Qt::Horizontal,liste.at(0));
         viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),liste.at(1));
         viewCizelge->setData(viewCizelge->index(1,viewCizelge->columnCount()-1),liste.at(2));
+    }
+    else if(tur==2)
+    {
 
-        ui->cizelge->setModel(viewCizelge);
-        ui->cizelge->setBarScale(0.85);
-        ui->cizelge->setBarType(QSint::BarChartPlotter::Columns);
-        ui->cizelge->repaint();
-        ui->cizelge->show();
+    }
+    else if(tur==4)
+    {
+        ui->lbl1->show();
+        ui->lbl2->show();
+        ui->lbl1p->show();
+        ui->lbl2p->show();
+        ui->lbl1p->setText("başarılı");
+        ui->lbl2p->setText("başarısız");
+
+        ui->cizelge->hide();
+        viewCizelge->setVerticalHeaderLabels(QStringList()<<"başarısız"<<"başarılı");
+        ui->tableViewCizelge->setModel(viewCizelge);
+
+        viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
+        viewCizelge->setHeaderData(1, Qt::Vertical, Qt::green, Qt::BackgroundRole);
+
+        viewCizelge->insertColumns(viewCizelge->columnCount(),1);
+        viewCizelge->setHeaderData(viewCizelge->columnCount()-1, Qt::Horizontal,liste.at(0));
+        viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),liste.at(1));
+        viewCizelge->setData(viewCizelge->index(1,viewCizelge->columnCount()-1),liste.at(2));
     }
 }
 
@@ -149,6 +253,7 @@ void kRapor::raporOlustur(int a)
     ui->tableWidget->clear();
     ui->tableWidget->setRowCount(0);
     ui->tableWidget->setColumnCount(0);
+    sonuc2Yuzdeler->setRowCount(0);
     ui->lbl1->hide();
     ui->lbl2->hide();
     ui->lbl3->hide();
@@ -175,6 +280,7 @@ void kRapor::raporOlustur(int a)
     {
         ui->tableWidget->setColumnCount(1);
         sonucRapor2();
+        rbCizelge();
     }
 }
 
@@ -253,8 +359,9 @@ void kRapor::sonucRapor2()
                 double yuzde11=sayac11/sayac1Toplam*100;
 
                 //if(yuzde00>=70)
-                if(sayac00!=0)
+                if(sayac00!=0 && yuzde00>=ui->txtYuzde->text().toInt())
                 {
+                    //YANLIŞ QUERY DERSID YE BAKMAK GEREK
                     QString sonuc;
                     query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
                     query3.next();
@@ -271,7 +378,7 @@ void kRapor::sonucRapor2()
                     ui->tableWidget->setCellWidget(currentRow,0,lbl);
                 }
                 //if(yuzde01>=70)
-                if(sayac01!=0)
+                if(sayac01!=0 && yuzde01>=ui->txtYuzde->text().toInt())
                 {
                     QString sonuc;
                     query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
@@ -288,9 +395,8 @@ void kRapor::sonucRapor2()
                     lbl->setText(sonuc);
                     ui->tableWidget->setCellWidget(currentRow,0,lbl);
                 }
-
                 //if(yuzde10>=70)
-                if(sayac10!=0)
+                if(sayac10!=0 && yuzde10>=ui->txtYuzde->text().toInt())
                 {
                     QString sonuc;
                     query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
@@ -308,8 +414,9 @@ void kRapor::sonucRapor2()
                     ui->tableWidget->setCellWidget(currentRow,0,lbl);
                 }
                 //if(yuzde11>=70)
-                if(sayac11!=0)
+                if(sayac11!=0 && yuzde11>=ui->txtYuzde->text().toInt())
                 {
+
                     QString sonuc;
                     query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
                     query3.next();
@@ -325,9 +432,20 @@ void kRapor::sonucRapor2()
                     lbl->setText(sonuc);
                     ui->tableWidget->setCellWidget(currentRow,0,lbl);
                 }
+                query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
+                query3.next();
+                query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
+                query4.next();
+
+                sonuc2Yuzdeler->insertRows(0,1);
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,0),query3.value(0).toString());
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,1),query4.value(0).toString());
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,2),yuzde00);
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,3),yuzde11);
             }
         }
     }
+    ui->tableViewCizelge->setModel(sonuc2Yuzdeler);
     ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
@@ -380,7 +498,7 @@ void kRapor::sonucRapor1()
         cizelgeListe.append("0");
         cizelgeListe.append("0");//if lere girmezse sizelge oluştururken uyg. çökmesin
         //if(yuzde0>=30)
-        if(sayac0!=0)
+        if(sayac0!=0 && yuzde0>=ui->txtYuzde->text().toInt())
         {
             sonuc=QString("<b>%1</b>").arg(query.value(0).toString());
             sonuc+=QString("<br>başarısız : %1 (%%2)").arg(sayac0).arg(QString::number(yuzde0,'f',2));
@@ -395,7 +513,7 @@ void kRapor::sonucRapor1()
             cizelgeListe.replace(1,QString::number(yuzde0));
         }
         //if(yuzde1>=17)
-        if(sayac1!=0)
+        if(sayac1!=0 && yuzde1>=ui->txtYuzde->text().toInt())
         {
             sonuc=QString("<b>%1</b>").arg(query.value(0).toString());
             sonuc+=QString("<br>başarılı : %1 (%%2)").arg(sayac1).arg(QString::number(yuzde1,'f',2));
@@ -409,7 +527,8 @@ void kRapor::sonucRapor1()
 
             cizelgeListe.replace(2,QString::number(yuzde1));
         }
-        cizelgeOlustur(3,cizelgeListe);
+        cizelgeViewOlustur(3,cizelgeListe);
+        cizelgeOlustur();
     }
     ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
@@ -451,7 +570,6 @@ void kRapor::kendiligindenRapor2()
                             liste[y][z]=0;
                         }
                     }
-
                     int sayac=0;
                     query.exec(QString("select ogrenciid from sonuc where sorunumarasi='%1' and sinavid='%2' and yuzde>='%3' and yuzde<'%4'").arg(i).arg(sinavid).arg(sinirlar.at(k).toInt()).arg(sinirlar.at(k+1).toInt()));
                     while(query.next())
@@ -535,7 +653,8 @@ void kRapor::kendiligindenRapor1()
             cizelgeListe.append(QString::number(yuzde));
             sonuc=sonuc+QString("<br>(%1 - %2) : %3 (%%4)").arg(sinirlar.at(k)).arg(sinirlar.at(k+1)).arg(sayac).arg(QString::number(yuzde,'f',2));
         }
-        cizelgeOlustur(1,cizelgeListe);
+        cizelgeViewOlustur(1,cizelgeListe);
+        cizelgeOlustur();
 
         QLabel *lbl=new QLabel();
         lbl->setText(sonuc);
@@ -594,6 +713,24 @@ void kRapor::cizelgeYukleme()
     ui->cizelge->setBackground(QBrush(bg));
 }
 
+void kRapor::yukleme2()
+{
+    ui->cbSinav->clear();
+    ui->label->clear();
+    ui->tableWidget->setRowCount(0);
+    ui->lbl1->hide();
+    ui->lbl2->hide();
+    ui->lbl3->hide();
+    ui->lbl4->hide();
+    ui->lbl1p->hide();
+    ui->lbl2p->hide();
+    ui->lbl3p->hide();
+    ui->lbl4p->hide();
+    viewCizelge->clear();
+    ui->tabWidget->setCurrentIndex(0);
+    ui->cbKistas->setCurrentIndex(0);
+}
+
 void kRapor::yukleme()
 {
     this->setWindowTitle("rapor2");
@@ -602,13 +739,23 @@ void kRapor::yukleme()
     ui->tableWidget->verticalHeader()->hide();
     ui->txtYuzdeAlt->setText("0");
     ui->txtYuzdeUst->setText("101");
+    ui->txtYuzde->setText("0");
     ui->cbKistas->addItem("seçim yapın");
     ui->cbKistas->addItem("birer");
     ui->cbKistas->addItem("ikişer");
     ui->cbKistas->addItem("sonuç1");
     ui->cbKistas->addItem("sonuç2");
+    ui->tableGrafikKonular->setRowCount(0);
+    ui->tableGrafikKonular->setColumnCount(1);
+    ui->tableGrafikKonular->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->tableGrafikKonular->horizontalHeader()->hide();
 
+    cizelgeYukleme();
     viewCizelge=new QStandardItemModel(this);
+    sonuc2Yuzdeler=new QStandardItemModel(this);
+
+    sonuc2Yuzdeler->setRowCount(0);
+    sonuc2Yuzdeler->setColumnCount(4);
     ui->tableViewCizelge->hide();
 }
 

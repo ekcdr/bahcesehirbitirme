@@ -2,6 +2,7 @@
 #define EKLEOGRENCI_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui {
     class ekleOgrenci;
@@ -15,6 +16,7 @@ public:
     explicit ekleOgrenci(QWidget *parent = 0);
     ~ekleOgrenci();
     Ui::ekleOgrenci *ui;
+    void keyPressEvent(QKeyEvent *e);
     void uyari(int i);
 
 public slots:

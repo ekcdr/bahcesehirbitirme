@@ -14,6 +14,14 @@ ekleOgrenci::ekleOgrenci(QWidget *parent) :
     connect(ui->btnIptal,SIGNAL(clicked()),this,SLOT(kapat()));
 }
 
+void ekleOgrenci::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
 void ekleOgrenci::kapat()
 {
     close();

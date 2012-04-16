@@ -2,6 +2,7 @@
 #define VERITABANIGOSTER_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui {
 class veritabaniGoster;
@@ -15,6 +16,7 @@ public:
     explicit veritabaniGoster(QWidget *parent = 0);
     ~veritabaniGoster();
     Ui::veritabaniGoster *ui;
+    void keyPressEvent(QKeyEvent *e);
 
 public slots:
     void kapat();

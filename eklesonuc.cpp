@@ -18,6 +18,19 @@ ekleSonuc::ekleSonuc(QWidget *parent) :
     yukleme();
 }
 
+void ekleSonuc::keyPressEvent(QKeyEvent *e)
+{
+    if(e->key()==Qt::Key_Escape)
+    {
+        kapat();
+    }
+}
+
+void ekleSonuc::kapat()
+{
+    close();
+}
+
 void ekleSonuc::toplamiGuncellestir(int i, int j)
 {  
     if(ilkAcilis==false && j!=ui->tableSonuclar->columnCount()-1) //toplami değiştirdiğinde bir daha fonk a girmesin diye

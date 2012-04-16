@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     krapor.cpp \
     charts/plotterbase.cpp \
     charts/barchartplotter.cpp \
-    charts/axisbase.cpp
+    charts/axisbase.cpp \
+    sinavistatistik.cpp
 
 HEADERS  += proje.h \
     ekleogrenci.h \
@@ -38,7 +39,8 @@ HEADERS  += proje.h \
     krapor.h \
     charts/plotterbase.h \
     charts/barchartplotter.h \
-    charts/axisbase.h
+    charts/axisbase.h \
+    sinavistatistik.h
 
 FORMS    += proje.ui \
     ekleogrenci.ui \
@@ -49,7 +51,8 @@ FORMS    += proje.ui \
     verigirisi.ui \
     eklesonuc.ui \
     listele.ui \
-    krapor.ui
+    krapor.ui \
+    sinavistatistik.ui
 
 
 

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QModelIndex>
+#include <QKeyEvent>
 
 namespace Ui {
     class raporla;
@@ -16,8 +17,10 @@ public:
     explicit raporla(QWidget *parent = 0);
     ~raporla();
     Ui::raporla *ui;
+    void keyPressEvent(QKeyEvent *e);
     void yukleme();
-    QString dersID;
+    void kapat();
+    //QString dersID;
 
 public slots:
     //void filtreKonu(QString q);//cbKonu nun içeriği --- olursa txtKonuPuan'ı devredışı bırakıyor. ve lblPuanı değiştiriyor
