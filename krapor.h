@@ -2,8 +2,7 @@
 #define KRAPOR_H
 
 #include <QDialog>
-#include <QSqlQuery>
-#include <QDebug>
+#include <QtSql>
 #include <QLabel>
 #include <QMessageBox>
 #include <QKeyEvent>

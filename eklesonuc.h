@@ -3,6 +3,9 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QMessageBox>
+#include <QTextCodec>
+#include <QtSql>
 
 namespace Ui {
 class ekleSonuc;
@@ -27,7 +30,6 @@ public:
 
 public slots:
     void puanKontrol(int i,int j);//girilen puanın sayı olup olmadığına bakıyor.
-    //void toplamiHesapla();//sinav sonucunu sonuc sutununa yazdırıyor
     void toplamiGuncellestir(int i,int j);//sonuc ekranında puanlardan birini değiştirince toplamında değişmesi için
 
 private:

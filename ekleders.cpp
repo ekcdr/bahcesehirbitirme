@@ -1,7 +1,5 @@
 #include "ekleders.h"
 #include "ui_ekleders.h"
-#include <QMessageBox>
-#include <QDebug>
 
 ekleDers::ekleDers(QWidget *parent) :
     QDialog(parent),

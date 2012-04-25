@@ -1,9 +1,5 @@
 #include "eklesonuc.h"
 #include "ui_eklesonuc.h"
-#include <QMessageBox>
-#include <QTextCodec>
-#include <QDebug>
-#include <QtSql>
 
 ekleSonuc::ekleSonuc(QWidget *parent) :
     QDialog(parent),

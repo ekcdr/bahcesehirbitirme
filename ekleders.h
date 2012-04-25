@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 namespace Ui {
     class ekleDers;

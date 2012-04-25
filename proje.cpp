@@ -9,6 +9,7 @@
 #include "ui_eklesonuc.h"
 #include "ui_listele.h"
 #include "ui_krapor.h"
+#include "ui_sinavistatistik.h"
 
 proje::proje(QWidget *parent) :
     QMainWindow(parent),
@@ -59,6 +60,7 @@ void proje::closeEvent(QCloseEvent *event)
 
 void proje::sinavGrafikGoster()
 {
+    /*
     formSinavIstatistik.viewCizelge->setColumnCount(0);
     QSqlQuery query;
     query.exec(QString("select sinavpuan from sinav where sinavid=(SELECT sinav.sinavid FROM sinav,derssinav WHERE sinav.sinavid=derssinav.sinavid AND sinavisim='%1' AND dersid=(select dersid from ders where dersisim='%2'))").arg(formRaporla.ui->cbSinav->currentText()).arg(ui->tableDersler->currentItem()->text()));
@@ -66,7 +68,8 @@ void proje::sinavGrafikGoster()
     QString dersisim=ui->tableDersler->currentItem()->text();
     formSinavIstatistik.setWindowTitle(formRaporla.ui->cbSinav->currentText()+" sınavı grafiği");
     formSinavIstatistik.cizelgeYukleme(query.value(0).toInt());
-    formSinavIstatistik.cizelgeOlustur(dersisim,formRaporla.ui->txtSinavPuan->text().toInt(),formRaporla.ui->cbKistas->currentText());
+    //formSinavIstatistik.cizelgeOlustur(dersisim,formRaporla.ui->txtSinavPuan->text().toInt(),formRaporla.ui->cbKistas->currentText());
+    */
     formSinavIstatistik.show();
 }
 
@@ -80,31 +83,6 @@ void proje::krapor()
         formKRapor.dersid=query.value(1).toString();
         formKRapor.ui->cbSinav->addItem(query.value(0).toString());
     }
-    /*
-    QSqlQuery query;
-    query.exec(QString("select sinavisim,dersid from sinav,derssinav where sinav.sinavid=derssinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(ui->tableDersler->currentItem()->text()));
-    formKRapor.ilkAcilis=true;
-    formKRapor.ui->cbSinav->clear();
-    formKRapor.ui->label->clear();
-    formKRapor.ui->tableWidget->setRowCount(0);
-    formKRapor.ui->lbl1->hide();
-    formKRapor.ui->lbl2->hide();
-    formKRapor.ui->lbl3->hide();
-    formKRapor.ui->lbl4->hide();
-    formKRapor.ui->lbl1p->hide();
-    formKRapor.ui->lbl2p->hide();
-    formKRapor.ui->lbl3p->hide();
-    formKRapor.ui->lbl4p->hide();
-    formKRapor.viewCizelge->clear();
-    formKRapor.ui->tabWidget->setCurrentIndex(0);
-    while(query.next())
-    {
-        formKRapor.dersid=query.value(1).toString();
-        formKRapor.ui->cbSinav->addItem(query.value(0).toString());
-    }
-    formKRapor.ilkAcilis=false;
-    formKRapor.ui->cbKistas->setCurrentIndex(0);*/
-    //formKRapor.exec();
     formKRapor.show();
 }
 
@@ -531,12 +509,13 @@ void proje::raporOlustur2()
     QSqlQuery query,query2;
     QString dersisim=ui->tableDersler->currentItem()->text();
     QString sinavisim=formRaporla.ui->cbSinav->currentText();
-    QStringList liste,liste2,baslik;
+    QStringList liste,liste2,baslik;//liste sınavdan kıstası geçemler, liste2 sorulardan kıstası geçenler
     QString bilgi;
+    formSinavIstatistik.viewCizelge->setColumnCount(0);
+    formSinavIstatistik.viewCizelge->setRowCount(0);
     formRaporla.ui->tableWidget->setRowCount(0);
     baslik<<"Öğrenci"<<"Sınav Puanı";
 
-    //query.exec(QString("select count (distinct ogrenci.ogrenciid) from ogrenci,dersogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1')").arg(dersisim));
     query.exec(QString("select count (distinct ogrenci.ogrenciid) from ogrenci,dersogrenci,sinavogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and ogrenci.ogrenciid=sinavogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1') and toplampuan!='--'").arg(dersisim));
     query.next();
 
@@ -554,7 +533,6 @@ void proje::raporOlustur2()
     double sayac=0;
     double yuzde=0;
 
-    //query.exec(QString("select ogrenciid from sinavogrenci,derssinav where sinavogrenci.sinavid=derssinav.sinavid and sinavogrenci.sinavid='%1' and dersid='%2' and toplampuan>='%3' and toplampuan!='--'").arg(sinavid).arg(dersid).arg(formRaporla.ui->txtSinavPuan->text()));
     query.exec(QString("select ogrenciid from sinavogrenci,derssinav where sinavogrenci.sinavid=derssinav.sinavid and sinavogrenci.sinavid='%1' and dersid='%2' and toplampuan %3 '%4' and toplampuan!='--'").arg(sinavid).arg(dersid).arg(formRaporla.ui->cbKistas->currentText()).arg(formRaporla.ui->txtSinavPuan->text()));
     while(query.next())
     {
@@ -563,7 +541,6 @@ void proje::raporOlustur2()
     }
     yuzde=(sayac/ogrenciSayisi)*100;
     bilgi=bilgi+QString("\nsınav: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
-    //bilgi=bilgi+QString("\nsınav: %1 (%%2)").arg(sayac).arg(yuzde);
 
     query.exec(QString("select sorusayisi from sinav,derssinav where sinav.sinavid=derssinav.sinavid and sinav.sinavid and sinav.sinavid='%1' and dersid='%2'").arg(sinavid).arg(dersid));
     query.next();
@@ -584,11 +561,15 @@ void proje::raporOlustur2()
 
     if(!etkinSorular.isEmpty()) //sınav sonucu + kıstastaki sorular
     {
+        formSinavIstatistik.viewCizelge->setVerticalHeaderLabels(QStringList()<<"toplam"<<etkinSorular);
+        formSinavIstatistik.ui->tableViewCizelge->setModel(formSinavIstatistik.viewCizelge);
+        formSinavIstatistik.viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
+
         for(int i=0;i<etkinSorular.count();i++)
         {
+            formSinavIstatistik.viewCizelge->setHeaderData(i+1, Qt::Vertical, Qt::green, Qt::BackgroundRole);
             sayac=0;
             QComboBox *com=qobject_cast<QComboBox *>(formRaporla.ui->tableWidgetKonular->cellWidget(i,4));
-            //query.exec(QString("select ogrenciid from sonuc,derssinav where sonuc.sinavid=derssinav.sinavid and sorunumarasi='%1' and alinanpuan>='%2' and alinanpuan!='--' and sonuc.sinavid='%3' and dersid='%4'").arg(etkinSorular.at(i)).arg(formRaporla.ui->tableWidgetKonular->item(etkinSorular.at(i).toInt()-1,5)->text().toInt()).arg(sinavid).arg(dersid));
             query.exec(QString("select ogrenciid from sonuc,derssinav where sonuc.sinavid=derssinav.sinavid and sorunumarasi='%1' and alinanpuan %2 '%3' and alinanpuan!='--' and sonuc.sinavid='%4' and dersid='%5'").arg(etkinSorular.at(i)).arg(com->currentText()).arg(formRaporla.ui->tableWidgetKonular->item(etkinSorular.at(i).toInt()-1,5)->text().toInt()).arg(sinavid).arg(dersid));
             while(query.next())
             {
@@ -602,7 +583,6 @@ void proje::raporOlustur2()
             else
             {
                 yuzde=sayac/ogrenciSayisi*100;
-                //bilgi=bilgi+QString("\n%3. soru: %1 (%%2)").arg(sayac).arg(yuzde).arg(etkinSorular.at(i));
                 bilgi=bilgi+QString("\n%3. soru: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2)).arg(etkinSorular.at(i));
             }
         }
@@ -617,71 +597,89 @@ void proje::raporOlustur2()
             }
         }
         yuzde=liste2.count()/ogrenciSayisi*100;
-        //bilgi=bilgi+QString("\nhepsi: %1 (%%2)").arg(liste2.count()).arg(yuzde);
         bilgi=bilgi+QString("\nhepsi: %1 (%%2)").arg(liste2.count()).arg(QString::number(yuzde,'f',2));
 
-        for(int a=0;a<liste2.count();a++)
+        QSqlQuery query3;
+        query3.exec(QString("select toplampuan,ogrenciid from sinavogrenci where sinavid='%1' order by toplampuan").arg(sinavid));
+        while(query3.next())
         {
-
-            const int currentRow = formRaporla.ui->tableWidget->rowCount();
-            formRaporla.ui->tableWidget->setRowCount(currentRow + 1);
-
-            QTableWidgetItem *itm1=new QTableWidgetItem();
-            itm1->setData(Qt::DisplayRole,liste2.at(a).toInt());
-            formRaporla.ui->tableWidget->setItem(currentRow,0,itm1); //ogrenciid leri yazdırıyor
-
-            for(int i=0;i<sorusayisi;i++)
+            if(liste2.contains(query3.value(1).toString()) && query3.value(0).toString()!="--")//sınava girmeyenler listelenmesin
             {
-                query2.exec(QString("select toplampuan,alinanpuan from sonuc,sinavogrenci where sinavogrenci.ogrenciid=sonuc.ogrenciid and sinavogrenci.sinavid=sonuc.sinavid and sonuc.ogrenciid='%1' and sonuc.sinavid=%2 and sorunumarasi='%3'").arg(liste2.at(a)).arg(sinavid).arg(i+1));
-                query2.next();
-                if(query2.value(0).toString()!="--")//sınava girmeyenler listelenmesin
-                {
-                    QTableWidgetItem *itm=new QTableWidgetItem();
-                    itm->setData(Qt::DisplayRole,query2.value(1).toInt());
-                    formRaporla.ui->tableWidget->setItem(currentRow,i+2,itm); // soru puanlarını yazdırıyor
-                }
-            }
-            if(query2.value(0).toString()!="--")//sınava girmeyenler listelenmesin
-            {
+                const int currentRow = formRaporla.ui->tableWidget->rowCount();
+                formRaporla.ui->tableWidget->setRowCount(currentRow + 1);
+
+                QTableWidgetItem *itm1=new QTableWidgetItem();
+                itm1->setData(Qt::DisplayRole,query3.value(1).toInt());
+                formRaporla.ui->tableWidget->setItem(currentRow,0,itm1); //ogrenciid leri yazdırıyor
+
+                formSinavIstatistik.viewCizelge->insertColumns(formSinavIstatistik.viewCizelge->columnCount(),1);
+                formSinavIstatistik.viewCizelge->setHeaderData(formSinavIstatistik.viewCizelge->columnCount()-1,Qt::Horizontal, query3.value(1).toString());
+
                 QTableWidgetItem *itm2=new QTableWidgetItem();
-                itm2->setData(Qt::DisplayRole,query2.value(0).toInt());
-                formRaporla.ui->tableWidget->setItem(currentRow,1,itm2); // sınav puanını yazdırıyor
+                itm2->setData(Qt::DisplayRole,query3.value(0).toInt());
+                formRaporla.ui->tableWidget->setItem(currentRow,1,itm2); //sınav sonucunu yazdırıyor
+                formSinavIstatistik.viewCizelge->setData(formSinavIstatistik.viewCizelge->index(0,formSinavIstatistik.viewCizelge->columnCount()-1),query3.value(0).toString());
+                for(int i=0;i<sorusayisi;i++)
+                {
+                    query2.exec(QString("select alinanpuan from sonuc where ogrenciid='%1' and sinavid='%2' and sorunumarasi='%3'").arg(query3.value(1).toString()).arg(sinavid).arg(i+1));
+                    query2.next();
+                    QTableWidgetItem *itm=new QTableWidgetItem();
+                    itm->setData(Qt::DisplayRole,query2.value(0).toInt());
+                    formRaporla.ui->tableWidget->setItem(currentRow,i+2,itm); //soruların sonuclarını yazdırıyor
+                    if(etkinSorular.contains(QString::number(i+1)))
+                    {
+                        formSinavIstatistik.viewCizelge->setData(formSinavIstatistik.viewCizelge->index(etkinSorular.indexOf(QString::number(i+1))+1,formSinavIstatistik.viewCizelge->columnCount()-1),query2.value(0).toInt());
+                    }
+                }
             }
         }
     }
     else //sadece sınav sonucu
     {
-        for(int a=0;a<liste.count();a++)
+        formSinavIstatistik.viewCizelge->setVerticalHeaderLabels(QStringList()<<"toplam");
+        formSinavIstatistik.ui->tableViewCizelge->setModel(formSinavIstatistik.viewCizelge);
+        formSinavIstatistik.viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
+
+        QSqlQuery query3;
+        query3.exec(QString("select toplampuan,ogrenciid from sinavogrenci where sinavid='%1' order by toplampuan").arg(sinavid));
+        while(query3.next())
         {
-            const int currentRow = formRaporla.ui->tableWidget->rowCount();
-            formRaporla.ui->tableWidget->setRowCount(currentRow + 1);
-
-            QTableWidgetItem *itm1=new QTableWidgetItem();
-            itm1->setData(Qt::DisplayRole,liste.at(a).toInt());
-            formRaporla.ui->tableWidget->setItem(currentRow,0,itm1); //ogrenciid leri yazdırıyor
-
-            for(int i=0;i<sorusayisi;i++)
+            if(liste.contains(query3.value(1).toString()) && query3.value(0).toString()!="--")//sınava girmeyenler listelenmesin
             {
-                query2.exec(QString("select toplampuan,alinanpuan from sonuc,sinavogrenci where sinavogrenci.ogrenciid=sonuc.ogrenciid and sinavogrenci.sinavid=sonuc.sinavid and sonuc.ogrenciid='%1' and sonuc.sinavid=%2 and sorunumarasi='%3'").arg(liste.at(a)).arg(sinavid).arg(i+1));
-                query2.next();
-                if(query2.value(0).toString()!="--")//sınava girmeyenler listelenmesin
+                const int currentRow = formRaporla.ui->tableWidget->rowCount();
+                formRaporla.ui->tableWidget->setRowCount(currentRow + 1);
+
+                QTableWidgetItem *itm1=new QTableWidgetItem();
+                itm1->setData(Qt::DisplayRole,query3.value(1).toInt());
+                formRaporla.ui->tableWidget->setItem(currentRow,0,itm1); //ogrenciid leri yazdırıyor
+
+                formSinavIstatistik.viewCizelge->insertColumns(formSinavIstatistik.viewCizelge->columnCount(),1);
+                formSinavIstatistik.viewCizelge->setHeaderData(formSinavIstatistik.viewCizelge->columnCount()-1,Qt::Horizontal, query3.value(1).toString());
+
+                QTableWidgetItem *itm2=new QTableWidgetItem();
+                itm2->setData(Qt::DisplayRole,query3.value(0).toInt());
+                formRaporla.ui->tableWidget->setItem(currentRow,1,itm2); //sınav sonucunu yazdırıyor
+                formSinavIstatistik.viewCizelge->setData(formSinavIstatistik.viewCizelge->index(0,formSinavIstatistik.viewCizelge->columnCount()-1),query3.value(0).toString());
+                for(int i=0;i<sorusayisi;i++)
                 {
+                    query2.exec(QString("select alinanpuan from sonuc where ogrenciid='%1' and sinavid='%2' and sorunumarasi='%3'").arg(query3.value(1).toString()).arg(sinavid).arg(i+1));
+                    query2.next();
                     QTableWidgetItem *itm=new QTableWidgetItem();
-                    itm->setData(Qt::DisplayRole,query2.value(1).toInt());
+                    itm->setData(Qt::DisplayRole,query2.value(0).toInt());
                     formRaporla.ui->tableWidget->setItem(currentRow,i+2,itm); //soruların sonuclarını yazdırıyor
                 }
-            }
-            if(query2.value(0).toString()!="--")//sınava girmeyenler listelenmesin
-            {
-                QTableWidgetItem *itm2=new QTableWidgetItem();
-                itm2->setData(Qt::DisplayRole,query2.value(0).toInt());
-                formRaporla.ui->tableWidget->setItem(currentRow,1,itm2); //sınav sonucunu yazdırıyor
             }
         }
     }
     formRaporla.ui->lblOgrenciSayi->setText(bilgi);
     formRaporla.ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     formRaporla.ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+
+    query.exec(QString("select sinavpuan from sinav where sinavid=(SELECT sinav.sinavid FROM sinav,derssinav WHERE sinav.sinavid=derssinav.sinavid AND sinavisim='%1' AND dersid=(select dersid from ders where dersisim='%2'))").arg(formRaporla.ui->cbSinav->currentText()).arg(ui->tableDersler->currentItem()->text()));
+    query.next();
+    formSinavIstatistik.setWindowTitle(formRaporla.ui->cbSinav->currentText()+" sınavı grafiği");
+    formSinavIstatistik.cizelgeYukleme(query.value(0).toInt());
+    formSinavIstatistik.cizelgeOlustur();
 }
 
 void proje::filtreSinav() //rapor1 de sınav değişince konuları dolduruyor
@@ -839,7 +837,6 @@ void proje::tamamOgrenci()
     QString ogrenciDers=ui->tableDersler->item(ui->tableDersler->currentRow(),0)->text();
     QSqlQuery query;
 
-    //query.exec("select ogrenciid from ogrenci");
     query.exec(QString("select ogrenci.ogrenciid from ogrenci,dersogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1')").arg(ogrenciDers));
     while(query.next())
     {
@@ -1036,8 +1033,6 @@ void proje::tamamSinav()
 
 void proje::tamamDers()
 {
-    qDebug()<<"qwqwqw";
-
     QSqlQuery query;
     query.exec("SELECT dersyil FROM ders");
     while(query.next())
@@ -1047,14 +1042,12 @@ void proje::tamamDers()
             ui->cbYil->addItem(query.value(0).toString());
         }
     }
-    //dersleriYazdir();
 
     bool kayitVar=false;
     QString dersID=formEkleDers.ui->txtDersID->text();
     QString dersIsim=formEkleDers.ui->txtDersIsim->text();
     QString dersDonem=formEkleDers.ui->cbDonem->currentText();
     QString dersYil=formEkleDers.ui->lblYil->text();
-    //QSqlQuery query;
 
     query.exec("select dersid from ders");
     while(query.next())

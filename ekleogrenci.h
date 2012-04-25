@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QMessageBox>
+#include <QTextCodec>
 
 namespace Ui {
     class ekleOgrenci;

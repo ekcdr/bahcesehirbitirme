@@ -59,6 +59,7 @@ void kRapor::konulariEkle()//grafiğin yanındaki table a konuları ekliyor
 
 void kRapor::raporTuru(int a)
 {
+    ui->tableWidget->setRowCount(0);
     if(a==0)
     {
         ui->btnOlustur->setEnabled(false);
@@ -73,6 +74,9 @@ void kRapor::raporTuru(int a)
     }
     else if(a==1 || a==2)
     {
+        viewCizelge->clear();
+        ui->cizelge->repaint();
+        ui->label->clear();
         ui->txtYuzdeAlt->setEnabled(false);
         ui->txtYuzdeUst->setEnabled(false);
         ui->txtYuzde->setEnabled(false);
@@ -90,6 +94,8 @@ void kRapor::raporTuru(int a)
     }
     else if(a==3 || a==4)
     {
+        viewCizelge->clear();
+        ui->cizelge->repaint();
         ui->btnOlustur->setEnabled(true);
         ui->txtYuzdeAlt->setEnabled(true);
         ui->txtYuzdeUst->setEnabled(true);
@@ -231,8 +237,8 @@ void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye ciz
         ui->lbl2->show();
         ui->lbl1p->show();
         ui->lbl2p->show();
-        ui->lbl1p->setText("başarılı");
-        ui->lbl2p->setText("başarısız");
+        ui->lbl1p->setText("başarısız");
+        ui->lbl2p->setText("başarılı");
 
         ui->cizelge->hide();
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"başarısız"<<"başarılı");

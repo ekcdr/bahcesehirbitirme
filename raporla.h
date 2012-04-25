@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QModelIndex>
 #include <QKeyEvent>
+#include <QTextCodec>
+#include <QtSql>
 
 namespace Ui {
     class raporla;
@@ -25,6 +27,7 @@ public:
 public slots:
     //void filtreKonu(QString q);//cbKonu nun içeriği --- olursa txtKonuPuan'ı devredışı bırakıyor. ve lblPuanı değiştiriyor
     void sirala(int);
+    void yazdir();
 
 private:
 

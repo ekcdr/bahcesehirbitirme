@@ -1,6 +1,5 @@
 #include "listele.h"
 #include "ui_listele.h"
-#include <QTextCodec>
 
 listele::listele(QWidget *parent) :
     QDialog(parent),

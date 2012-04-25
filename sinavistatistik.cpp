@@ -15,33 +15,61 @@ void sinavIstatistik::kapat()
     close();
 }
 
-void sinavIstatistik::ilkYukleme()
+//void sinavIstatistik::cizelgeOlustur(QString dersisim,int sayi, QString kistas, QStringList etkinSorular)
+void sinavIstatistik::cizelgeOlustur()
 {
-    viewCizelge=new QStandardItemModel(this);
-    ui->tableViewCizelge->hide();
-}
-
-void sinavIstatistik::cizelgeOlustur(QString dersisim,int sayi, QString kistas)
-{
-    viewCizelge->setVerticalHeaderLabels(QStringList()<<"toplampuan");
-    ui->tableViewCizelge->setModel(viewCizelge);
-
-    ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
-    viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
-
-    QSqlQuery query;
-    query.exec(QString("select ogrenci.ogrenciid,toplampuan from ogrenci,dersogrenci,sinavogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and ogrenci.ogrenciid=sinavogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1') and toplampuan!='--' and toplampuan %2 '%3' order by toplampuan").arg(dersisim).arg(kistas).arg(sayi));
-    while(query.next())
+    /*
+    viewCizelge->setColumnCount(0);
+    viewCizelge->setRowCount(0);
+    if(etkinSorular.count()==0)
     {
-        viewCizelge->insertColumns(viewCizelge->columnCount(),1);
-        viewCizelge->setHeaderData(viewCizelge->columnCount()-1,Qt::Horizontal, query.value(0).toString());
-        viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),query.value(1).toString());
+        viewCizelge->setVerticalHeaderLabels(QStringList()<<"toplampuan");
+        ui->tableViewCizelge->setModel(viewCizelge);
+
+        ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
+        viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
+
+        QSqlQuery query;
+        query.exec(QString("select ogrenci.ogrenciid,toplampuan from ogrenci,dersogrenci,sinavogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and ogrenci.ogrenciid=sinavogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1') and toplampuan!='--' and toplampuan %2 '%3' order by toplampuan").arg(dersisim).arg(kistas).arg(sayi));
+        while(query.next())
+        {
+            viewCizelge->insertColumns(viewCizelge->columnCount(),1);
+            viewCizelge->setHeaderData(viewCizelge->columnCount()-1,Qt::Horizontal, query.value(0).toString());
+            viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),query.value(1).toString());
+        }
+    }
+    else
+    {
+        etkinSorular.insert(0,"toplam");
+
+        viewCizelge->setVerticalHeaderLabels(etkinSorular);
+        ui->tableViewCizelge->setModel(viewCizelge);
+
+        ui->cizelge->hide();
+        viewCizelge->setHeaderData(0, Qt::Vertical, Qt::red, Qt::BackgroundRole);
+
+        QSqlQuery query;
+        //query2.exec(QString("select toplampuan,alinanpuan from sonuc,sinavogrenci where sinavogrenci.ogrenciid=sonuc.ogrenciid and sinavogrenci.sinavid=sonuc.sinavid and sonuc.ogrenciid='%1' and sonuc.sinavid=%2 and sorunumarasi='%3'").arg(liste2.at(a)).arg(sinavid).arg(i+1));
+        query.exec(QString("select ogrenci.ogrenciid,toplampuan from ogrenci,dersogrenci,sinavogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and ogrenci.ogrenciid=sinavogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1') and toplampuan!='--' and toplampuan %2 '%3' order by toplampuan").arg(dersisim).arg(kistas).arg(sayi));
+        while(query.next())
+        {
+            viewCizelge->insertColumns(viewCizelge->columnCount(),1);
+            viewCizelge->setHeaderData(viewCizelge->columnCount()-1,Qt::Horizontal, query.value(0).toString());
+            viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),query.value(1).toString());
+        }
     }
     ui->cizelge->setModel(viewCizelge);
     ui->cizelge->setBarScale(0.85);
     ui->cizelge->setBarType(QSint::BarChartPlotter::Columns);
     ui->cizelge->repaint();
     ui->cizelge->show();
+    */
+
+
+    ui->cizelge->setModel(viewCizelge);
+    ui->cizelge->setBarScale(0.85);
+    ui->cizelge->setBarType(QSint::BarChartPlotter::Columns);
+    ui->cizelge->repaint();
 }
 
 void sinavIstatistik::cizelgeYukleme(int toplampuan)
@@ -69,6 +97,12 @@ void sinavIstatistik::cizelgeYukleme(int toplampuan)
     bg.setColorAt(1, Qt::white);
     bg.setColorAt(0, Qt::white);
     ui->cizelge->setBackground(QBrush(bg));
+}
+
+void sinavIstatistik::ilkYukleme()
+{
+    viewCizelge=new QStandardItemModel(this);
+    ui->tableViewCizelge->hide();
 }
 
 sinavIstatistik::~sinavIstatistik()

@@ -47,7 +47,6 @@ public slots:
     void dersleriYazdir(); //dersleri ana ekrana yazdırıyor
     void raporDers();
     void filtreSinav();
-    //void raporOlustur();
     void raporOlustur2();
     void veritabani();
     void veritabaniGuncelle();

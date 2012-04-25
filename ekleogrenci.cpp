@@ -1,7 +1,5 @@
 #include "ekleogrenci.h"
 #include "ui_ekleogrenci.h"
-#include <QMessageBox>
-#include <QTextCodec>
 
 ekleOgrenci::ekleOgrenci(QWidget *parent) :
     QDialog(parent),

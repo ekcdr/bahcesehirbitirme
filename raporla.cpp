@@ -1,8 +1,11 @@
 #include "raporla.h"
 #include "ui_raporla.h"
-#include <QTextCodec>
-#include <QSqlQuery>
-#include <QDebug>
+
+#include <QPrinter>
+#include <QPainter>
+#include <QPixmap>
+#include <QTextDocument>
+#include <QFileDialog>
 
 raporla::raporla(QWidget *parent) :
     QDialog(parent),
@@ -14,7 +17,40 @@ raporla::raporla(QWidget *parent) :
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sirala(int)));
+    connect(ui->btnYazdir,SIGNAL(clicked()),this,SLOT(yazdir()));
     yukleme();
+}
+
+void raporla::yazdir()
+{
+    /*
+    QPixmap pix = QPixmap::grabWidget(ui->tableWidget);
+
+    QPrinter printer(QPrinter::HighResolution);
+    QPainter painter;
+    painter.begin(&printer);
+    //painter.drawPixmap (0, 0, &pix);
+    painter.drawPixmap(0,0,pix);
+    painter.end();
+    */
+/*
+    //QPixmap pix = QPixmap::grabWidget(ui->tableWidget);
+    //String fileName = QFileDialog::getSaveFileName(this,tr("Export as> Pdf.."),"", tr("PDF files (*.pdf)"));
+    QPrinter printer(QPrinter::HighResolution);
+
+    printer.setOutputFileName("nnn");
+    printer.setOutputFormat( QPrinter::PdfFormat );
+
+    QPainter p( &printer );
+    //p.drawPixmap(0,0,pix);
+
+
+    p.drawText(0, 0 , 250, 200,Qt::TextSingleLine,"sss");
+    p.drawText(0, 0 , 250, 200,Qt::TextSingleLine,"dddd");
+
+*/
+
+
 }
 
 void raporla::keyPressEvent(QKeyEvent *e)

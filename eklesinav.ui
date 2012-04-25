@@ -20,13 +20,13 @@
       <widget class="QLabel" name="label_7">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>16777215</height>
         </size>
        </property>
@@ -45,13 +45,13 @@
       <widget class="QLabel" name="label_8">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>16777215</height>
         </size>
        </property>
@@ -70,13 +70,13 @@
       <widget class="QLabel" name="label_9">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
+         <width>70</width>
          <height>16777215</height>
         </size>
        </property>
@@ -95,7 +95,7 @@
       <widget class="QPushButton" name="btnDoldur">
        <property name="maximumSize">
         <size>
-         <width>75</width>
+         <width>110</width>
          <height>16777215</height>
         </size>
        </property>
@@ -106,7 +106,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Doldur</string>
+        <string>Konuları Ekle</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

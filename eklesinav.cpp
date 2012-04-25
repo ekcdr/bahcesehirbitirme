@@ -1,8 +1,5 @@
 #include "eklesinav.h"
 #include "ui_eklesinav.h"
-#include <QMessageBox>
-#include <QDebug>
-#include <QTextCodec>
 
 ekleSinav::ekleSinav(QWidget *parent) :
     QDialog(parent),

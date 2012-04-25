@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QKeyEvent>
+#include <QTextCodec>
 
 namespace Ui {
 class listele;

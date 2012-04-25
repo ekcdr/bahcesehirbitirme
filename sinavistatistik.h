@@ -2,7 +2,7 @@
 #define SINAVISTATISTIK_H
 
 #include <QDialog>
-#include <QSqlQuery>
+#include <QtSql>
 #include "charts/barchartplotter.h"
 #include "charts/axisbase.h"
 
@@ -20,7 +20,8 @@ public:
     Ui::sinavIstatistik *ui;
     QStandardItemModel *viewCizelge;
     void cizelgeYukleme(int);
-    void cizelgeOlustur(QString, int, QString);
+    //void cizelgeOlustur(QString, int, QString, QStringList);
+    void cizelgeOlustur();
     void ilkYukleme();
 
 public slots:
