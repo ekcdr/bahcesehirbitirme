@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QTextCodec>
 #include <QtSql>
+#include <QCheckBox>
 
 namespace Ui {
     class raporla;
@@ -22,12 +23,15 @@ public:
     void keyPressEvent(QKeyEvent *e);
     void yukleme();
     void kapat();
-    //QString dersID;
+    void raporBirOncesi(QString);
+    QString dersID;
 
 public slots:
     //void filtreKonu(QString q);//cbKonu nun içeriği --- olursa txtKonuPuan'ı devredışı bırakıyor. ve lblPuanı değiştiriyor
     void sirala(int);
     void yazdir();
+    void filtreSinav();//rapor1 de sınav değişince konuları dolduruyor
+    void konuEtkin();//rapor1 de konu başındaki tik var mı diye bakıp etkinlik durumunu değiştiriyor
 
 private:
 

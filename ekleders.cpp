@@ -18,11 +18,62 @@ void ekleDers::keyPressEvent(QKeyEvent *e)
     {
         kapat();
     }
+    else if(e->key()==Qt::Key_Return)
+    {
+        ui->btnTamam->click();
+    }
+}
+
+bool ekleDers::tamam()
+{
+    QSqlQuery query;
+    bool kayitVar=false;
+    QString dersID=ui->txtDersID->text();
+    QString dersIsim=ui->txtDersIsim->text();
+    QString dersDonem=ui->cbDonem->currentText();
+    QString dersYil=ui->lblYil->text();
+
+    if(dersID=="" || dersIsim=="")
+    {
+        uyari(0);
+        return false;
+    }
+    else
+    {
+        query.exec("select dersid from ders");
+        while(query.next())
+        {
+            if(query.value(0).toString()==dersID)
+            {
+                uyari(1);
+                kayitVar=true;
+                break;
+                return false;
+            }
+        }
+        if(kayitVar==false)
+        {
+            query.exec(QString("insert into ders values('%1','%2','%3','%4')").arg(dersID).arg(dersIsim).arg(dersDonem).arg(dersYil));
+            ui->txtDersID->setText("");
+            ui->txtDersIsim->setText("");
+            ui->txtDersID->setFocus();
+            return true;
+        }
+    }
 }
 
 void ekleDers::kapat()
 {
     close();
+}
+
+void ekleDers::dersEklemeOncesi()
+{
+    QDate tarih;
+    int yil=tarih.currentDate().year();
+    ui->lblYil->setText(QString::number(yil)+" - "+QString::number(yil+1));
+    ui->txtDersID->clear();
+    ui->txtDersIsim->clear();
 }
 
 void ekleDers::uyari(int i)

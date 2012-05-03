@@ -27,6 +27,8 @@ public:
     QStringList degisenIDOgrenci;//güncelleme sırasında tüm kayıtları kaydetmesin sadece değişenleri güncellesin
     void yukleme();
     void kapat();
+    void sonucEklemeOncesi(QString);
+    bool tamam();
 
 public slots:
     void puanKontrol(int i,int j);//girilen puanın sayı olup olmadığına bakıyor.

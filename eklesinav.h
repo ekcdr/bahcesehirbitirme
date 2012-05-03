@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QtSql>
 
 namespace Ui {
     class ekleSinav;
@@ -21,6 +22,8 @@ public:
     void keyPressEvent(QKeyEvent *e);
     void uyari(int i);
     void yukleme();
+    void sinavEklemeOncesi(QString);
+    bool tamam(QString sinavDers);
     bool bosVar;//konu sutununda bos alan var mı
 
 public slots:

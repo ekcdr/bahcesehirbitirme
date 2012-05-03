@@ -27,21 +27,23 @@ public:
     QStandardItemModel *viewCizelge;
     QStandardItemModel *sonuc2Yuzdeler;
     void yukleme();
-    void yukleme2();
-    void kendiligindenRapor1();
-    void kendiligindenRapor2();
-    void sonucRapor1();
-    void sonucRapor2();
+    void kraporOncesi(QString);
+    void rapor2birer();
+    void rapor2ikiser();
+    void rapor3birer();
+    void rapor3ikiser();
     void cizelgeYukleme();
     void cizelgeViewOlustur(int,QStringList);
     void konulariEkle();
     void cizelgeOlustur();
+    QStringList rapor3birerYazdir(QStringList cizelgeListe, int sayac, double yuzde, QString konuIsim, int tur);
+    void rapor3ikiserYazdir(int sayacIlk, int sayac, double yuzde, QString konuBir,QString konuIki, int tur);
     bool denetle();
 
 public slots:
     void kapat();
     void raporOlustur(int);
-    void raporOlustur2();
+    void raporOlusturDenetleme();
     void sinavDegisti();
     void raporTuru(int);
     void rbCizelge();

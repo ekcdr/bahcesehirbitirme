@@ -39,15 +39,14 @@ public slots:
     void tamamOgrenci();
     void tamamSinav();
     void tamamDers();
-    void tamamSonuc2();
+    void tamamSonuc();
     void fEkleOgrenci();
     void fEkleDers();
     void fEkleSinav();
     void fEkleSonuc();
     void dersleriYazdir(); //dersleri ana ekrana yazdırıyor
-    void raporDers();
-    void filtreSinav();
-    void raporOlustur2();
+    void raporBir();
+    void raporOlustur();
     void veritabani();
     void veritabaniGuncelle();
     void veriGirisiYap(int i, int j);
@@ -56,7 +55,6 @@ public slots:
     void sinavListele();
     void sonucKapat();
     void krapor();
-    void konuEtkin();
     void sinavGrafikGoster();
 
 private:

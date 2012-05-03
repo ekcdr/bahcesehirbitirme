@@ -22,9 +22,77 @@ void ekleSonuc::keyPressEvent(QKeyEvent *e)
     }
 }
 
+bool ekleSonuc::tamam()
+{
+    if(ekleSonucDegisiklikVar==true)
+    {
+        QSqlQuery query,query2;
+        for(int h=0;h<degisenIDOgrenci.count();h++)
+        {
+            int ayrac=degisenIDOgrenci.at(h).indexOf("|");
+            QString s=degisenIDOgrenci.at(h);
+            QString ogrenciid=s.remove(ayrac,degisenIDOgrenci.at(h).length());
+            s=degisenIDOgrenci.at(h);
+            QString sinavid=s.remove(0,ogrenciid.length()+1);
+
+            query.exec(QString("select sorusayisi from sinav where sinavid='%1'").arg(sinavid));
+            query.next();
+            int sorusayisi=query.value(0).toInt();
+
+            int toplamPuan=0;
+            for(int i=0;i<sorusayisi;i++)
+            {
+                QList<QTableWidgetItem *> liste=ui->tableSonuclar->findItems(ogrenciid,Qt::MatchExactly);
+                for(int k=0;k<liste.count();k++)
+                {
+                    if(liste.at(k)->column()==0)
+                    {
+                        query2.exec(QString("select puan from soru where sinavid='%1' and sorunumarasi='%2'").arg(sinavid).arg(i+1));
+                        query2.next();
+                        double yuzde=ui->tableSonuclar->item(liste.at(k)->row(),i+1)->text().toDouble()/query2.value(0).toDouble()*100;
+                        if(ui->tableSonuclar->item(liste.at(k)->row(),i+1)->text()=="--")
+                        {
+                            query.exec(QString("update sonuc set alinanpuan='%1', yuzde='%2' where sinavid='%3' and ogrenciid='%4' and sorunumarasi='%5'").arg(0).arg(yuzde).arg(sinavid).arg(ogrenciid).arg(i+1));
+                        }
+                        else
+                        {
+                            query.exec(QString("update sonuc set alinanpuan='%1', yuzde='%2' where sinavid='%3' and ogrenciid='%4' and sorunumarasi='%5'").arg(ui->tableSonuclar->item(liste.at(k)->row(),i+1)->text()).arg(yuzde).arg(sinavid).arg(ogrenciid).arg(i+1));
+                        }
+                        toplamPuan=toplamPuan+ui->tableSonuclar->item(liste.at(k)->row(),i+1)->text().toInt();
+                    }
+                }
+            }
+            query.exec(QString("update sinavogrenci set toplampuan='%1' where sinavid='%2' and ogrenciid='%3'").arg(toplamPuan).arg(sinavid).arg(ogrenciid));
+        }
+        uyari(1);
+        ekleSonucDegisiklikVar=false;
+        degisenIDOgrenci.clear();
+        return true;
+    }
+    else
+    {
+        uyari(0);
+        return false;
+    }
+}
+
 void ekleSonuc::kapat()
 {
     close();
+}
+
+void ekleSonuc::sonucEklemeOncesi(QString dersIsim)
+{
+    setWindowTitle(dersIsim+" dersi için sonuçları gir");
+    ui->cbSinav->clear();
+    QSqlQuery query;
+    query.exec(QString("select sinavisim from sinav,derssinav where sinav.sinavid=derssinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsim));
+    while(query.next())
+    {
+        ui->cbSinav->addItem(query.value(0).toString());
+    }
+    degisenIDOgrenci.clear();
+    ekleSonucDegisiklikVar=false;
 }
 
 void ekleSonuc::toplamiGuncellestir(int i, int j)

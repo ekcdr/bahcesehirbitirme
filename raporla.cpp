@@ -1,12 +1,6 @@
 #include "raporla.h"
 #include "ui_raporla.h"
 
-#include <QPrinter>
-#include <QPainter>
-#include <QPixmap>
-#include <QTextDocument>
-#include <QFileDialog>
-
 raporla::raporla(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::raporla)
@@ -18,39 +12,12 @@ raporla::raporla(QWidget *parent) :
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sirala(int)));
     connect(ui->btnYazdir,SIGNAL(clicked()),this,SLOT(yazdir()));
+    connect(ui->cbSinav,SIGNAL(currentIndexChanged(QString)),this,SLOT(filtreSinav()));
     yukleme();
 }
 
 void raporla::yazdir()
 {
-    /*
-    QPixmap pix = QPixmap::grabWidget(ui->tableWidget);
-
-    QPrinter printer(QPrinter::HighResolution);
-    QPainter painter;
-    painter.begin(&printer);
-    //painter.drawPixmap (0, 0, &pix);
-    painter.drawPixmap(0,0,pix);
-    painter.end();
-    */
-/*
-    //QPixmap pix = QPixmap::grabWidget(ui->tableWidget);
-    //String fileName = QFileDialog::getSaveFileName(this,tr("Export as> Pdf.."),"", tr("PDF files (*.pdf)"));
-    QPrinter printer(QPrinter::HighResolution);
-
-    printer.setOutputFileName("nnn");
-    printer.setOutputFormat( QPrinter::PdfFormat );
-
-    QPainter p( &printer );
-    //p.drawPixmap(0,0,pix);
-
-
-    p.drawText(0, 0 , 250, 200,Qt::TextSingleLine,"sss");
-    p.drawText(0, 0 , 250, 200,Qt::TextSingleLine,"dddd");
-
-*/
-
-
 }
 
 void raporla::keyPressEvent(QKeyEvent *e)
@@ -59,11 +26,125 @@ void raporla::keyPressEvent(QKeyEvent *e)
     {
         kapat();
     }
+    else if(e->key()==Qt::Key_Return)
+    {
+        ui->btnRaporla->click();
+    }
 }
 
 void raporla::kapat()
 {
     close();
+}
+
+void raporla::filtreSinav()
+{
+    ui->tableWidget->setRowCount(0);
+    ui->tableWidgetKonular->setRowCount(0);
+    ui->txtSinavPuan->setText("0");
+    ui->lblOgrenciSayi->clear();
+
+    QSqlQuery query;
+    //query.exec(QString("SELECT sorunumarasi,konuisim,puan FROM soru WHERE sinavid=(select sinavid from sinav where sinavisim='%1')").arg(ui->cbSinav->currentText()));
+    query.exec(QString("select sorunumarasi,konuisim,puan from soru,derssinav where soru.sinavid=derssinav.sinavid and soru.sinavid=(select sinavid from sinav where sinavisim='%1') and dersid='%2'").arg(ui->cbSinav->currentText()).arg(dersID));
+    while(query.next())
+    {
+        const int currentRow = ui->tableWidgetKonular->rowCount();
+        ui->tableWidgetKonular->setRowCount(currentRow + 1);
+
+        QCheckBox *cb=new QCheckBox();
+        ui->tableWidgetKonular->setCellWidget(currentRow,0,cb);
+
+        QTableWidgetItem *itm1=new QTableWidgetItem(query.value(0).toString());
+        ui->tableWidgetKonular->setItem(currentRow,1,itm1);
+        QTableWidgetItem *itm2=new QTableWidgetItem(query.value(1).toString());
+        ui->tableWidgetKonular->setItem(currentRow,2,itm2);
+        QTableWidgetItem *itm3=new QTableWidgetItem(query.value(2).toString());
+        ui->tableWidgetKonular->setItem(currentRow,3,itm3);
+
+        QComboBox *com=new QComboBox();
+        com->addItems(QStringList()<<">"<<"<"<<">="<<"<="<<"="<<"!=");
+        ui->tableWidgetKonular->setCellWidget(currentRow,4,com);
+
+        QTableWidgetItem *itm4=new QTableWidgetItem("0");
+        ui->tableWidgetKonular->setItem(currentRow,5,itm4);
+        itm1->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm2->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm3->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        connect(cb,SIGNAL(clicked()),this,SLOT(konuEtkin()));
+    }
+    //query.exec(QString("select sinavpuan from sinav where sinavid=(SELECT sinav.sinavid FROM sinav,derssinav WHERE sinav.sinavid=derssinav.sinavid AND sinavisim='%1' AND dersid=(select dersid from ders where dersisim='%2'))").arg(ui->cbSinav->currentText()).arg(ui->tableDersler->currentItem()->text()));
+    query.exec(QString("select sinavpuan from sinav where sinavid=(SELECT sinav.sinavid FROM sinav,derssinav WHERE sinav.sinavid=derssinav.sinavid AND sinavisim='%1' AND dersid='%2')").arg(ui->cbSinav->currentText()).arg(dersID));
+    query.next();
+    ui->lblSinavToplamPuan->setText("("+query.value(0).toString()+")");
+    konuEtkin();
+}
+
+void raporla::konuEtkin()
+{
+    for(int i=0;i<ui->tableWidgetKonular->rowCount();i++)
+    {
+        QCheckBox *cb=qobject_cast<QCheckBox *>(ui->tableWidgetKonular->cellWidget(i,0));
+        if(cb->isChecked()==false)
+        {
+            for(int h=1;h<6;h++)//6 sutun var
+            {
+                if(h==4)//4. combobox sutunu aşağıdaki else in içindeki kod hata verdiği için ayrı
+                {
+                    QComboBox *com=qobject_cast<QComboBox *>(ui->tableWidgetKonular->cellWidget(i,4));
+                    com->setEnabled(false);
+                }
+                else
+                {
+                    QTableWidgetItem *itm= new QTableWidgetItem();
+                    itm=ui->tableWidgetKonular->item(i,h);
+                    itm->setFlags(Qt::NoItemFlags);
+                    if(h==5)//5. puan sutunu
+                    {
+                        itm->setData(Qt::DisplayRole,"--");
+                    }
+                }
+            }
+        }
+        if(cb->isChecked()==true)
+        {
+            for(int h=1;h<6;h++)
+            {
+                if(h==4)
+                {
+                    QComboBox *com=qobject_cast<QComboBox *>(ui->tableWidgetKonular->cellWidget(i,4));
+                    com->setEnabled(true);
+                }
+                else
+                {
+                    QTableWidgetItem *itm= new QTableWidgetItem();
+                    itm=ui->tableWidgetKonular->item(i,h);
+                    if(h==5)
+                    {
+                        itm->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled);
+                    }
+                    else
+                    {
+                        itm->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void raporla::raporBirOncesi(QString dersIsim)
+{
+    setWindowTitle(dersIsim+" raporu");
+    ui->tableWidget->setRowCount(0);
+    ui->cbSinav->clear();
+    ui->lblOgrenciSayi->clear();
+    QSqlQuery query;
+    query.exec(QString("SELECT sinavisim FROM sinav,derssinav WHERE derssinav.sinavid=sinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsim));
+    while(query.next())
+    {
+        ui->cbSinav->addItem(query.value(0).toString());
+    }
 }
 
 void raporla::sirala(int sutun)

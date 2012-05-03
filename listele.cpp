@@ -26,6 +26,78 @@ void listele::kapat()
     close();
 }
 
+void listele::sinavListeleOncesi(QString dersIsmi)
+{
+    setWindowTitle(dersIsmi+" dersi için sınav listesi");
+    yuklemeSinav();
+
+    //YANLIŞ  OLABİLİR query
+    QSqlQuery query,query2;
+    query.exec(QString("select sinavisim,sorusayisi,sinavpuan,sinav.sinavid from sinav,derssinav where derssinav.sinavid=sinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsmi));
+    while(query.next())
+    {
+        const int currentRow = ui->tableListe->rowCount();
+        ui->tableListe->setRowCount(currentRow + 1);
+        QTableWidgetItem *itm0=new QTableWidgetItem(query.value(0).toString());
+        ui->tableListe->setItem(currentRow,0,itm0);
+        QTableWidgetItem *itm1=new QTableWidgetItem(query.value(1).toString());
+        ui->tableListe->setItem(currentRow,1,itm1);
+        QTableWidgetItem *itm2=new QTableWidgetItem(query.value(2).toString());
+        ui->tableListe->setItem(currentRow,2,itm2);
+        query2.exec(QString("select avg (toplampuan) from sinavogrenci where sinavid='%1'").arg(query.value(3).toString()));
+        query2.next();
+        QTableWidgetItem *itm3=new QTableWidgetItem(query2.value(0).toString());
+        ui->tableListe->setItem(currentRow,3,itm3);
+        itm0->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm1->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm2->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm3->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+    }
+}
+
+void listele::ogrenciListeleOncesi(QString dersIsmi)
+{
+    QSqlQuery query,query2;
+    setWindowTitle(dersIsmi+" dersi için öğrenci listesi");
+    yuklemeOgrenci();
+
+    //ogrenci listesine sınavları ekliyor
+    query.exec(QString("select sinavisim from derssinav,sinav where derssinav.sinavid=sinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsmi));
+    while(query.next())
+    {
+        const int currentColumn = ui->tableListe->columnCount();
+        ui->tableListe->setColumnCount(currentColumn + 1);
+        QTableWidgetItem *itm=new QTableWidgetItem(query.value(0).toString());
+        ui->tableListe->setHorizontalHeaderItem(currentColumn,itm);
+        itm->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+    }
+
+    int i=0;
+    query.exec(QString("select ogrenci.ogrenciid,isim from ogrenci,dersogrenci where ogrenci.ogrenciid=dersogrenci.ogrenciid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsmi));
+    while(query.next())
+    {
+        int j=2;
+        const int currentRow = ui->tableListe->rowCount();
+        ui->tableListe->setRowCount(currentRow + 1);
+        QTableWidgetItem *itm0=new QTableWidgetItem(query.value(0).toString());
+        ui->tableListe->setItem(currentRow,0,itm0);
+        QTableWidgetItem *itm1=new QTableWidgetItem(query.value(1).toString());
+        ui->tableListe->setItem(currentRow,1,itm1);
+
+        query2.exec(QString("select toplampuan from sinavogrenci where ogrenciid='%1'").arg(ui->tableListe->item(i,0)->text()));
+        while(query2.next())
+        {
+            QTableWidgetItem *itm=new QTableWidgetItem(query2.value(0).toString());
+            ui->tableListe->setItem(i,j,itm);
+            itm->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            j++;
+        }
+        itm0->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        itm1->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        i++;
+    }
+}
+
 void listele::yuklemeSinav()
 {
     ui->tableListe->setRowCount(0);

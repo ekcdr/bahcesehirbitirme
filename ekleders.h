@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QDate>
+#include <QtSql>
 
 namespace Ui {
     class ekleDers;
@@ -19,6 +21,8 @@ public:
     Ui::ekleDers *ui;
     void keyPressEvent(QKeyEvent *e);
     void uyari(int i);
+    void dersEklemeOncesi();
+    bool tamam();
 
 public slots:
     void yilEksilt();

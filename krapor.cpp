@@ -9,7 +9,7 @@ kRapor::kRapor(QWidget *parent) :
     connect(ui->cbSinav,SIGNAL(currentIndexChanged(QString)),this,SLOT(sinavDegisti()));
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(kapat()));
     connect(ui->cbKistas,SIGNAL(currentIndexChanged(int)),this,SLOT(raporTuru(int)));
-    connect(ui->btnOlustur,SIGNAL(clicked()),this,SLOT(raporOlustur2()));
+    connect(ui->btnOlustur,SIGNAL(clicked()),this,SLOT(raporOlusturDenetleme()));
     yukleme();
 }
 
@@ -18,6 +18,10 @@ void kRapor::keyPressEvent(QKeyEvent *e)
     if(e->key()==Qt::Key_Escape)
     {
         kapat();
+    }
+    else if(e->key()==Qt::Key_Return)
+    {
+        raporOlusturDenetleme();
     }
 }
 
@@ -31,7 +35,7 @@ bool kRapor::denetle()
     return true;
 }
 
-void kRapor::raporOlustur2()
+void kRapor::raporOlusturDenetleme()
 {
     if(denetle()==true)
     {
@@ -88,8 +92,33 @@ void kRapor::raporTuru(int a)
         ui->tableGrafikKonular->hide();
         if(a==2)
         {
-            ui->tableGrafikKonular->show();
-            konulariEkle();
+            ui->lbl1->hide();
+            ui->lbl2->hide();
+            ui->lbl3->hide();
+            ui->lbl4->hide();
+            ui->lbl1p->hide();
+            ui->lbl2p->hide();
+            ui->lbl3p->hide();
+            ui->lbl4p->hide();
+            ui->cizelge->hide();
+            //ui->tabGrafik->setEnabled(false);
+            //ui->tabGrafik->hide();
+        }
+        else if(a==1)
+        {
+            ui->cizelge->show();
+            ui->lbl1->show();
+            ui->lbl2->show();
+            ui->lbl3->show();
+            ui->lbl4->show();
+            ui->lbl1p->show();
+            ui->lbl2p->show();
+            ui->lbl3p->show();
+            ui->lbl4p->show();
+            ui->lbl1p->setText("0-26");
+            ui->lbl2p->setText("26-51");
+            ui->lbl3p->setText("51-76");
+            ui->lbl4p->setText("76-100");
         }
     }
     else if(a==3 || a==4)
@@ -105,6 +134,17 @@ void kRapor::raporTuru(int a)
         ui->lblYuzde->setEnabled(true);
         ui->cbKistasYuzde->setEnabled(true);
         ui->tableGrafikKonular->hide();
+        ui->cizelge->show();
+        ui->lbl1->show();
+        ui->lbl2->show();
+        ui->lbl1p->show();
+        ui->lbl2p->show();
+        ui->lbl1p->setText("başarısız");
+        ui->lbl2p->setText("başarılı");
+        ui->lbl3->hide();
+        ui->lbl4->hide();
+        ui->lbl3p->hide();
+        ui->lbl4p->hide();
         if(a==4)
         {
             ui->tableGrafikKonular->show();
@@ -143,7 +183,6 @@ void kRapor::rbCizelge()//rb değiştiğinde cizelgelisti güncelliyor
             break;
         }
     }
-
     for(int i=0;i<sonuc2Yuzdeler->rowCount();i++)
     {
         if(sonuc2Yuzdeler->data(sonuc2Yuzdeler->index(i,0),Qt::DisplayRole).toString()==seciliKonu)
@@ -178,19 +217,6 @@ void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye ciz
     if(tur==1)
     {
         ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
-        ui->lbl1->show();
-        ui->lbl2->show();
-        ui->lbl3->show();
-        ui->lbl4->show();
-        ui->lbl1p->show();
-        ui->lbl2p->show();
-        ui->lbl3p->show();
-        ui->lbl4p->show();
-        ui->lbl1p->setText("0-26");
-        ui->lbl2p->setText("26-51");
-        ui->lbl3p->setText("51-76");
-        ui->lbl4p->setText("76-100");
-
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"0-26"<<"26-51"<<"51-76"<<"76-101");
         ui->tableViewCizelge->setModel(viewCizelge);
 
@@ -209,12 +235,6 @@ void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye ciz
     else if(tur==3)
     {
         ui->cizelge->hide();//hızlıca cizelgeyi yazdırsın diye önce gizliyor sonunda açıyorum
-        ui->lbl1->show();
-        ui->lbl2->show();
-        ui->lbl1p->show();
-        ui->lbl2p->show();
-        ui->lbl1p->setText("başarısız");
-        ui->lbl2p->setText("başarılı");
 
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"başarısız"<<"başarılı");
         ui->tableViewCizelge->setModel(viewCizelge);
@@ -227,19 +247,8 @@ void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye ciz
         viewCizelge->setData(viewCizelge->index(0,viewCizelge->columnCount()-1),liste.at(1));
         viewCizelge->setData(viewCizelge->index(1,viewCizelge->columnCount()-1),liste.at(2));
     }
-    else if(tur==2)
-    {
-
-    }
     else if(tur==4)
     {
-        ui->lbl1->show();
-        ui->lbl2->show();
-        ui->lbl1p->show();
-        ui->lbl2p->show();
-        ui->lbl1p->setText("başarısız");
-        ui->lbl2p->setText("başarılı");
-
         ui->cizelge->hide();
         viewCizelge->setVerticalHeaderLabels(QStringList()<<"başarısız"<<"başarılı");
         ui->tableViewCizelge->setModel(viewCizelge);
@@ -260,37 +269,29 @@ void kRapor::raporOlustur(int a)
     ui->tableWidget->setRowCount(0);
     ui->tableWidget->setColumnCount(0);
     sonuc2Yuzdeler->setRowCount(0);
-    ui->lbl1->hide();
-    ui->lbl2->hide();
-    ui->lbl3->hide();
-    ui->lbl4->hide();
-    ui->lbl1p->hide();
-    ui->lbl2p->hide();
-    ui->lbl3p->hide();
-    ui->lbl4p->hide();
     if(a==1)
     {
-        kendiligindenRapor1();
+        rapor2birer();
     }
     else if(a==2)
     {
         ui->tableWidget->setColumnCount(4);
-        kendiligindenRapor2();
+        rapor2ikiser();
     }
     else if(a==3)
     {
         ui->tableWidget->setColumnCount(1);
-        sonucRapor1();
+        rapor3birer();
     }
     else if(a==4)
     {
         ui->tableWidget->setColumnCount(1);
-        sonucRapor2();
+        rapor3ikiser();
         rbCizelge();
     }
 }
 
-void kRapor::sonucRapor2()
+void kRapor::rapor3ikiser()
 {
     QSqlQuery query,query2,query3,query4;
     QStringList sinirlarAlt,sinirlarUst;
@@ -364,88 +365,55 @@ void kRapor::sonucRapor2()
                 double yuzde10=sayac10/sayac1Toplam*100;
                 double yuzde11=sayac11/sayac1Toplam*100;
 
-                //if(yuzde00>=70)
-                if(sayac00!=0 && yuzde00>=ui->txtYuzde->text().toInt())
-                {
-                    //YANLIŞ QUERY DERSID YE BAKMAK GEREK
-                    QString sonuc;
-                    query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
-                    query3.next();
-                    query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
-                    query4.next();
-                    sonuc=QString("<b>%1 -> %2 </b>").arg(query3.value(0).toString()).arg(query4.value(0).toString());
-                    sonuc=sonuc+QString("<br>başarısız: %1").arg(sayac0Toplam);
-                    sonuc=sonuc+QString("<br>başarısız: %1 (%%2)").arg(sayac00).arg(QString::number(yuzde00,'f',2));
-
-                    const int currentRow = ui->tableWidget->rowCount();
-                    ui->tableWidget->setRowCount(currentRow + 1);
-                    QLabel *lbl=new QLabel();
-                    lbl->setText(sonuc);
-                    ui->tableWidget->setCellWidget(currentRow,0,lbl);
-                }
-                //if(yuzde01>=70)
-                if(sayac01!=0 && yuzde01>=ui->txtYuzde->text().toInt())
-                {
-                    QString sonuc;
-                    query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
-                    query3.next();
-                    query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
-                    query4.next();
-                    sonuc=QString("<b>%1  -> %2 </b>").arg(query3.value(0).toString()).arg(query4.value(0).toString());
-                    sonuc=sonuc+QString("<br>başarısız: %1").arg(sayac0Toplam);
-                    sonuc=sonuc+QString("<br>başarılı: %1 (%%2)").arg(sayac01).arg(QString::number(yuzde01,'f',2));
-
-                    const int currentRow = ui->tableWidget->rowCount();
-                    ui->tableWidget->setRowCount(currentRow + 1);
-                    QLabel *lbl=new QLabel();
-                    lbl->setText(sonuc);
-                    ui->tableWidget->setCellWidget(currentRow,0,lbl);
-                }
-                //if(yuzde10>=70)
-                if(sayac10!=0 && yuzde10>=ui->txtYuzde->text().toInt())
-                {
-                    QString sonuc;
-                    query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
-                    query3.next();
-                    query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
-                    query4.next();
-                    sonuc=QString("<b>%1  -> %2 </b>").arg(query3.value(0).toString()).arg(query4.value(0).toString());
-                    sonuc=sonuc+QString("<br>başarılı: %1").arg(sayac1Toplam);
-                    sonuc=sonuc+QString("<br>başarısız: %1 (%%2)").arg(sayac10).arg(QString::number(yuzde10,'f',2));
-
-                    const int currentRow = ui->tableWidget->rowCount();
-                    ui->tableWidget->setRowCount(currentRow + 1);
-                    QLabel *lbl=new QLabel();
-                    lbl->setText(sonuc);
-                    ui->tableWidget->setCellWidget(currentRow,0,lbl);
-                }
-                //if(yuzde11>=70)
-                if(sayac11!=0 && yuzde11>=ui->txtYuzde->text().toInt())
-                {
-
-                    QString sonuc;
-                    query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
-                    query3.next();
-                    query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
-                    query4.next();
-                    sonuc=QString("<b>%1 -> %2 </b>").arg(query3.value(0).toString()).arg(query4.value(0).toString());
-                    sonuc=sonuc+QString("<br>başarılı: %1").arg(sayac1Toplam);
-                    sonuc=sonuc+QString("<br>başarılı: %1 (%%2)").arg(sayac11).arg(QString::number(yuzde11,'f',2));
-
-                    const int currentRow = ui->tableWidget->rowCount();
-                    ui->tableWidget->setRowCount(currentRow + 1);
-                    QLabel *lbl=new QLabel();
-                    lbl->setText(sonuc);
-                    ui->tableWidget->setCellWidget(currentRow,0,lbl);
-                }
                 query3.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i).arg(ui->cbSinav->currentText()));
                 query3.next();
+                QString KonuBir=query3.value(0).toString();
                 query4.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(j).arg(ui->cbSinav->currentText()));
                 query4.next();
+                QString KonuIki=query4.value(0).toString();
+
+                if(ui->cbKistasYuzde->currentText()==">")
+                {
+                    if(sayac00!=0 && yuzde00>ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac0Toplam,sayac00,yuzde00,KonuBir,KonuIki,0);
+                    }
+                    if(sayac01!=0 && yuzde01>ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac0Toplam,sayac01,yuzde01,KonuBir,KonuIki,1);
+                    }
+                    if(sayac10!=0 && yuzde10>ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac1Toplam,sayac10,yuzde10,KonuBir,KonuIki,2);
+                    }
+                    if(sayac11!=0 && yuzde11>ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac1Toplam,sayac11,yuzde11,KonuBir,KonuIki,3);
+                    }
+                }
+                else if(ui->cbKistasYuzde->currentText()=="<")
+                {
+                    if(sayac00!=0 && yuzde00<ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac0Toplam,sayac00,yuzde00,KonuBir,KonuIki,0);
+                    }
+                    if(sayac01!=0 && yuzde01<ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac0Toplam,sayac01,yuzde01,KonuBir,KonuIki,1);
+                    }
+                    if(sayac10!=0 && yuzde10<ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac1Toplam,sayac10,yuzde10,KonuBir,KonuIki,2);
+                    }
+                    if(sayac11!=0 && yuzde11<ui->txtYuzde->text().toInt())
+                    {
+                        rapor3ikiserYazdir(sayac1Toplam,sayac11,yuzde11,KonuBir,KonuIki,3);
+                    }
+                }
 
                 sonuc2Yuzdeler->insertRows(0,1);
-                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,0),query3.value(0).toString());
-                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,1),query4.value(0).toString());
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,0),KonuBir);
+                sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,1),KonuIki);
                 sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,2),yuzde00);
                 sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,3),yuzde11);
             }
@@ -456,7 +424,38 @@ void kRapor::sonucRapor2()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::sonucRapor1()
+void kRapor::rapor3ikiserYazdir(int sayacIlk, int sayac, double yuzde, QString konuBir,QString konuIki, int tur)
+{
+    QString sonuc;
+    sonuc=QString("<b>%1 -> %2 </b>").arg(konuBir).arg(konuIki);
+    if(tur==0)
+    {
+        sonuc=sonuc+QString("<br>başarısız: %1").arg(sayacIlk);
+        sonuc=sonuc+QString("<br>başarısız: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+    }
+    else if(tur==1)
+    {
+        sonuc=sonuc+QString("<br>başarısız: %1").arg(sayacIlk);
+        sonuc=sonuc+QString("<br>başarılı: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+    }
+    else if(tur==2)
+    {
+        sonuc=sonuc+QString("<br>başarılı: %1").arg(sayacIlk);
+        sonuc=sonuc+QString("<br>başarısız: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+    }
+    else if(tur==3)
+    {
+        sonuc=sonuc+QString("<br>başarılı: %1").arg(sayacIlk);
+        sonuc=sonuc+QString("<br>başarılı: %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+    }
+    const int currentRow = ui->tableWidget->rowCount();
+    ui->tableWidget->setRowCount(currentRow + 1);
+    QLabel *lbl=new QLabel();
+    lbl->setText(sonuc);
+    ui->tableWidget->setCellWidget(currentRow,0,lbl);
+}
+
+void kRapor::rapor3birer()
 {
     QSqlQuery query,query2;
     QStringList sinirlarAlt,sinirlarUst;
@@ -478,12 +477,12 @@ void kRapor::sonucRapor1()
 
     for(int i=0;i<sorusayisi;i++)
     {
-        QString sonuc;
         QStringList cizelgeListe;
         //query.exec(QString("select konuisim,puan from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i+1).arg(ui->cbSinav->currentText()));
         query.exec(QString("select konuisim from soru where sorunumarasi='%1' and sinavid=(select sinavid from sinav where sinavisim='%2')").arg(i+1).arg(ui->cbSinav->currentText()));
         query.next();
-        cizelgeListe.append(query.value(0).toString());
+        QString konuIsim=query.value(0).toString();
+        cizelgeListe.append(konuIsim);
 
         int sayac0=0;//her asamada kac ogrenci var
         double yuzde0;
@@ -502,37 +501,31 @@ void kRapor::sonucRapor1()
         }
         yuzde1=sayac1/ogrenciSayisi*100;
         cizelgeListe.append("0");
-        cizelgeListe.append("0");//if lere girmezse sizelge oluştururken uyg. çökmesin
-        //if(yuzde0>=30)
-        if(sayac0!=0 && yuzde0>=ui->txtYuzde->text().toInt())
+        cizelgeListe.append("0");//if lere girmezse cizelge oluştururken uyg. çökmesin
+
+        if(ui->cbKistasYuzde->currentText()==">")
         {
-            sonuc=QString("<b>%1</b>").arg(query.value(0).toString());
-            sonuc+=QString("<br>başarısız : %1 (%%2)").arg(sayac0).arg(QString::number(yuzde0,'f',2));
-
-            QLabel *lbl=new QLabel();
-            lbl->setText(sonuc);
-
-            const int currentRow = ui->tableWidget->rowCount();
-            ui->tableWidget->setRowCount(currentRow + 1);
-            ui->tableWidget->setCellWidget(currentRow,0,lbl);
-
-            cizelgeListe.replace(1,QString::number(yuzde0));
+            if(sayac0!=0 && yuzde0>ui->txtYuzde->text().toInt())
+            {
+                cizelgeListe=rapor3birerYazdir(cizelgeListe,sayac0,yuzde0,konuIsim,0);
+            }
+            if(sayac1!=0 && yuzde1>ui->txtYuzde->text().toInt())
+            {
+                cizelgeListe=rapor3birerYazdir(cizelgeListe,sayac1,yuzde1,konuIsim,1);
+            }
         }
-        //if(yuzde1>=17)
-        if(sayac1!=0 && yuzde1>=ui->txtYuzde->text().toInt())
+        else if(ui->cbKistasYuzde->currentText()=="<")
         {
-            sonuc=QString("<b>%1</b>").arg(query.value(0).toString());
-            sonuc+=QString("<br>başarılı : %1 (%%2)").arg(sayac1).arg(QString::number(yuzde1,'f',2));
-
-            QLabel *lbl=new QLabel();
-            lbl->setText(sonuc);
-
-            const int currentRow = ui->tableWidget->rowCount();
-            ui->tableWidget->setRowCount(currentRow + 1);
-            ui->tableWidget->setCellWidget(currentRow,0,lbl);
-
-            cizelgeListe.replace(2,QString::number(yuzde1));
+            if(sayac0!=0 && yuzde0<ui->txtYuzde->text().toInt())
+            {
+                cizelgeListe=rapor3birerYazdir(cizelgeListe,sayac0,yuzde0,konuIsim,0);
+            }
+            if(sayac1!=0 && yuzde1<ui->txtYuzde->text().toInt())
+            {
+                cizelgeListe=rapor3birerYazdir(cizelgeListe,sayac1,yuzde1,konuIsim,1);
+            }
         }
+
         cizelgeViewOlustur(3,cizelgeListe);
         cizelgeOlustur();
     }
@@ -540,7 +533,34 @@ void kRapor::sonucRapor1()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::kendiligindenRapor2()
+QStringList kRapor::rapor3birerYazdir(QStringList cizelgeListe,int sayac,double yuzde,QString konuIsim,int tur)
+{
+    //tur=0 başarısız
+    //tur=1 başarılı
+    QString sonuc;
+    sonuc=QString("<b>%1</b>").arg(konuIsim);
+    if(tur==0)
+    {
+        sonuc+=QString("<br>başarısız : %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+        cizelgeListe.replace(1,QString::number(yuzde));
+    }
+    else if(tur==1)
+    {
+        sonuc+=QString("<br>başarılı : %1 (%%2)").arg(sayac).arg(QString::number(yuzde,'f',2));
+        cizelgeListe.replace(2,QString::number(yuzde));
+    }
+
+    QLabel *lbl=new QLabel();
+    lbl->setText(sonuc);
+
+    const int currentRow = ui->tableWidget->rowCount();
+    ui->tableWidget->setRowCount(currentRow + 1);
+    ui->tableWidget->setCellWidget(currentRow,0,lbl);
+
+    return cizelgeListe;
+}
+
+void kRapor::rapor2ikiser()
 {
     QSqlQuery query,query2;
     QStringList sinirlar;//basari sinirlari(4 asama var)
@@ -613,7 +633,7 @@ void kRapor::kendiligindenRapor2()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::kendiligindenRapor1()
+void kRapor::rapor2birer()
 {
     QSqlQuery query;
     QStringList sinirlar;//basari sinirlari(4 asama var)
@@ -719,7 +739,7 @@ void kRapor::cizelgeYukleme()
     ui->cizelge->setBackground(QBrush(bg));
 }
 
-void kRapor::yukleme2()
+void kRapor::kraporOncesi(QString dersIsim)
 {
     ui->cbSinav->clear();
     ui->label->clear();
@@ -735,6 +755,14 @@ void kRapor::yukleme2()
     viewCizelge->clear();
     ui->tabWidget->setCurrentIndex(0);
     ui->cbKistas->setCurrentIndex(0);
+
+    QSqlQuery query;
+    query.exec(QString("select sinavisim,dersid from sinav,derssinav where sinav.sinavid=derssinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsim));
+    while(query.next())
+    {
+        dersid=query.value(1).toString();
+        ui->cbSinav->addItem(query.value(0).toString());
+    }
 }
 
 void kRapor::yukleme()
@@ -747,10 +775,10 @@ void kRapor::yukleme()
     ui->txtYuzdeUst->setText("101");
     ui->txtYuzde->setText("0");
     ui->cbKistas->addItem("seçim yapın");
-    ui->cbKistas->addItem("birer");
-    ui->cbKistas->addItem("ikişer");
-    ui->cbKistas->addItem("sonuç1");
-    ui->cbKistas->addItem("sonuç2");
+    ui->cbKistas->addItem("rapor2-1");
+    ui->cbKistas->addItem("rapor2-2");
+    ui->cbKistas->addItem("rapor3-1");
+    ui->cbKistas->addItem("rapor3-2");
     ui->tableGrafikKonular->setRowCount(0);
     ui->tableGrafikKonular->setColumnCount(1);
     ui->tableGrafikKonular->horizontalHeader()->setResizeMode(QHeaderView::Stretch);

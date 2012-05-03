@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QKeyEvent>
 #include <QTextCodec>
+#include <QtSql>
 
 namespace Ui {
 class listele;
@@ -20,6 +21,8 @@ public:
     void keyPressEvent(QKeyEvent *e);
     void yuklemeOgrenci();
     void yuklemeSinav();
+    void ogrenciListeleOncesi(QString);
+    void sinavListeleOncesi(QString);
 
 public slots:
     void kapat();
