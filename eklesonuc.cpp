@@ -11,6 +11,7 @@ ekleSonuc::ekleSonuc(QWidget *parent) :
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
     connect(ui->tableSonuclar,SIGNAL(cellChanged(int,int)),this,SLOT(puanKontrol(int,int)));
     connect(ui->tableSonuclar,SIGNAL(cellChanged(int,int)),this,SLOT(toplamiGuncellestir(int,int)));
+    connect(ui->btnDisariAktar,SIGNAL(clicked()),this,SLOT(disariAktar()));
     yukleme();
 }
 
@@ -19,6 +20,31 @@ void ekleSonuc::keyPressEvent(QKeyEvent *e)
     if(e->key()==Qt::Key_Escape)
     {
         kapat();
+    }
+    else if(e->key()==Qt::Key_Return)
+    {
+        ui->btnTamam->click();
+    }
+}
+
+void ekleSonuc::disariAktar()
+{
+    QString dosya = QFileDialog::getSaveFileName(this,tr("Dosyayı Kaydet"),QCoreApplication::applicationDirPath()+"/untitled.csv",tr("(*.csv);;Tüm Dosyalar(*.*)"));
+    QFile f(dosya);
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+        for( int r = 0; r < ui->tableSonuclar->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->tableSonuclar->columnCount(); ++c )
+            {
+                strList <<"\""+ui->tableSonuclar->item(r,c)->text()+"\"";
+            }
+            data << strList.join( ";" )+"\n";
+        }
+        f.close();
     }
 }
 

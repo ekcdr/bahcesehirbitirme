@@ -8,7 +8,7 @@
 #include "ui_verigirisi.h"
 #include "ui_eklesonuc.h"
 #include "ui_listele.h"
-#include "ui_krapor.h"
+#include "ui_raporla2.h"
 #include "ui_sinavistatistik.h"
 
 proje::proje(QWidget *parent) :
@@ -20,6 +20,7 @@ proje::proje(QWidget *parent) :
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
     connect(ui->btnVeritabani,SIGNAL(clicked()),this,SLOT(veritabani()));
+    connect(formVeritabani.ui->cbVeritabani,SIGNAL(currentIndexChanged(QString)),this,SLOT(veritabaniDoldur()));
     connect(ui->btnDersEkle,SIGNAL(clicked()),this,SLOT(fEkleDers()));
     connect(ui->cbDonem,SIGNAL(currentIndexChanged(QString)),this,SLOT(dersleriYazdir()));
     connect(ui->cbYil,SIGNAL(currentIndexChanged(QString)),this,SLOT(dersleriYazdir()));
@@ -38,7 +39,7 @@ proje::proje(QWidget *parent) :
     connect(formVeriGirisi.ui->btnOgrenciListe,SIGNAL(clicked()),this,SLOT(ogrenciListele()));
     connect(formVeriGirisi.ui->btnSinavListe,SIGNAL(clicked()),this,SLOT(sinavListele()));
     connect(formVeriGirisi.ui->btnRapor,SIGNAL(clicked()),this,SLOT(raporBir()));
-    connect(formVeriGirisi.ui->btnKRapor,SIGNAL(clicked()),this,SLOT(krapor()));
+    connect(formVeriGirisi.ui->btnRapor2,SIGNAL(clicked()),this,SLOT(raporIki()));
     yukleme();
 }
 
@@ -52,30 +53,20 @@ void proje::closeEvent(QCloseEvent *event)
     formRaporla.kapat();
     formVeritabani.kapat();
     formListele.kapat();
-    formKRapor.kapat();
+    formRaporla2.kapat();
     formVeriGirisi.kapat();
     event->accept();
 }
 
 void proje::sinavGrafikGoster()
 {
-    /*
-    formSinavIstatistik.viewCizelge->setColumnCount(0);
-    QSqlQuery query;
-    query.exec(QString("select sinavpuan from sinav where sinavid=(SELECT sinav.sinavid FROM sinav,derssinav WHERE sinav.sinavid=derssinav.sinavid AND sinavisim='%1' AND dersid=(select dersid from ders where dersisim='%2'))").arg(formRaporla.ui->cbSinav->currentText()).arg(ui->tableDersler->currentItem()->text()));
-    query.next();
-    QString dersisim=ui->tableDersler->currentItem()->text();
-    formSinavIstatistik.setWindowTitle(formRaporla.ui->cbSinav->currentText()+" sınavı grafiği");
-    formSinavIstatistik.cizelgeYukleme(query.value(0).toInt());
-    //formSinavIstatistik.cizelgeOlustur(dersisim,formRaporla.ui->txtSinavPuan->text().toInt(),formRaporla.ui->cbKistas->currentText());
-    */
     formSinavIstatistik.show();
 }
 
-void proje::krapor()
+void proje::raporIki()
 {
-    formKRapor.kraporOncesi(ui->tableDersler->currentItem()->text());
-    formKRapor.show();
+    formRaporla2.raporIkiOncesi(ui->tableDersler->currentItem()->text());
+    formRaporla2.show();
 }
 
 void proje::kalinFont(QTableWidgetItem *itm)
@@ -354,6 +345,7 @@ void proje::veritabaniGuncelle()
 
 void proje::veritabani()
 {
+    /*
     formVeritabani.ui->tableView->setModel(modelKonu);
     formVeritabani.ui->tableView_2->setModel(modelSoru);
     formVeritabani.ui->tableView_3->setModel(modelDersOgrenci);
@@ -370,7 +362,49 @@ void proje::veritabani()
     formVeritabani.ui->tableView_6->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     formVeritabani.ui->tableView_7->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     formVeritabani.ui->tableView_8->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    */
     formVeritabani.show();
+}
+
+void proje::veritabaniDoldur()
+{
+    if(formVeritabani.ui->cbVeritabani->currentText()=="OGRENCI")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelOgrenci);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="DERS")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelDers);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="KONU")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelKonu);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="SORU")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelSoru);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="SONUC")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelSonuc);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="DERSSINAV")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelSinav);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="DERSOGRENCI")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelDersOgrenci);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="SINAVOGRENCI")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelSinavOgrenci);
+    }
+    else if(formVeritabani.ui->cbVeritabani->currentText()=="SINAV")
+    {
+         formVeritabani.ui->tableVeritabani->setModel(modelSinav);
+    }
+    formVeritabani.ui->tableVeritabani->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 }
 
 void proje::raporOlustur()
@@ -554,11 +588,29 @@ void proje::raporOlustur()
 void proje::raporBir()
 {
     QSqlQuery query;
-    query.exec(QString("select dersid from ders where dersisim='%1'").arg(ui->tableDersler->currentItem()->text()));
+    query.exec(QString("select count(ogrenciid) from dersogrenci where dersid=(select dersid from ders where dersisim='%1')").arg(ui->tableDersler->currentItem()->text()));
     query.next();
-    formRaporla.dersID=query.value(0).toString();
-    formRaporla.raporBirOncesi(ui->tableDersler->currentItem()->text());
-    formRaporla.show();
+    if(query.value(0).toInt()==0)
+    {
+        QMessageBox::warning(0,"proje","Raporlanacak öğrenci yok.","Tamam");
+    }
+    else
+    {
+        query.exec(QString("select count(sinavid) from derssinav where dersid=(select dersid from ders where dersisim='%1')").arg(ui->tableDersler->currentItem()->text()));
+        query.next();
+        if(query.value(0).toInt()==0)
+        {
+            QMessageBox::warning(0,"proje","Raporlanacak sınav yok.","Tamam");
+        }
+        else
+        {
+            query.exec(QString("select dersid from ders where dersisim='%1'").arg(ui->tableDersler->currentItem()->text()));
+            query.next();
+            formRaporla.dersID=query.value(0).toString();
+            formRaporla.raporBirOncesi(ui->tableDersler->currentItem()->text());
+            formRaporla.show();
+        }
+    }
 }
 
 void proje::fEkleOgrenci()
@@ -650,45 +702,59 @@ void proje::tamamDers()
 
 void proje::yukleme()
 {
+    QStringList veritabaniListe;//veritabani isimlerini sıralı bir şekilde cbVeritabani na eklemek için
     modelOgrenci=new QSqlRelationalTableModel(this);
     modelOgrenci->setTable("ogrenci");
     modelOgrenci->select();
+    veritabaniListe.append("OGRENCI");
 
     modelKonu=new QSqlRelationalTableModel(this);
     modelKonu->setTable("konu");
     modelKonu->select();
+    veritabaniListe.append("KONU");
 
     modelSinav=new QSqlRelationalTableModel(this);
     modelSinav->setTable("sinav");
     modelSinav->select();
+    veritabaniListe.append("SINAV");
 
     modelDers=new QSqlRelationalTableModel(this);
     modelDers->setTable("ders");
     modelDers->select();
+    veritabaniListe.append("DERS");
 
     modelDersSinav=new QSqlRelationalTableModel(this);
     modelDersSinav->setTable("derssinav");
     modelDersSinav->select();
+    veritabaniListe.append("DERSSINAV");
 
     modelDersOgrenci=new QSqlRelationalTableModel(this);
     modelDersOgrenci->setTable("dersogrenci");
     modelDersOgrenci->select();
+    veritabaniListe.append("DERSOGRENCI");
 
     modelSoru=new QSqlRelationalTableModel(this);
     modelSoru->setTable("soru");
     modelSoru->select();
+    veritabaniListe.append("SORU");
 
     modelSonuc=new QSqlRelationalTableModel(this);
     modelSonuc->setTable("sonuc");
     modelSonuc->select();
+    veritabaniListe.append("SONUC");
 
     modelSinavOgrenci=new QSqlRelationalTableModel(this);
     modelSinavOgrenci->setTable("sinavogrenci");
     modelSinavOgrenci->select();
+    veritabaniListe.append("SINAVOGRENCI");
 
     modelSonucSinav=new QSqlRelationalTableModel(this);
     modelSonucSinav->setTable("sonucsinav");
     modelSonucSinav->select();
+    veritabaniListe.append("SONUCSINAV");
+
+    veritabaniListe.sort();
+    formVeritabani.ui->cbVeritabani->addItems(veritabaniListe);
 
     ui->tableDersler->setRowCount(0);
     ui->tableDersler->setColumnCount(3);

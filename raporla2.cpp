@@ -1,9 +1,9 @@
-#include "krapor.h"
-#include "ui_krapor.h"
+#include "raporla2.h"
+#include "ui_raporla2.h"
 
-kRapor::kRapor(QWidget *parent) :
+raporla2::raporla2(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::kRapor)
+    ui(new Ui::raporla2)
 {
     ui->setupUi(this);
     connect(ui->cbSinav,SIGNAL(currentIndexChanged(QString)),this,SLOT(sinavDegisti()));
@@ -13,7 +13,7 @@ kRapor::kRapor(QWidget *parent) :
     yukleme();
 }
 
-void kRapor::keyPressEvent(QKeyEvent *e)
+void raporla2::keyPressEvent(QKeyEvent *e)
 {
     if(e->key()==Qt::Key_Escape)
     {
@@ -25,7 +25,7 @@ void kRapor::keyPressEvent(QKeyEvent *e)
     }
 }
 
-bool kRapor::denetle()
+bool raporla2::denetle()
 {
     if(ui->txtYuzdeAlt->text()!=QString::number(ui->txtYuzdeAlt->text().toDouble()) || ui->txtYuzdeUst->text()!=QString::number(ui->txtYuzdeUst->text().toDouble()))
     {
@@ -35,7 +35,7 @@ bool kRapor::denetle()
     return true;
 }
 
-void kRapor::raporOlusturDenetleme()
+void raporla2::raporOlusturDenetleme()
 {
     if(denetle()==true)
     {
@@ -43,7 +43,7 @@ void kRapor::raporOlusturDenetleme()
     }
 }
 
-void kRapor::konulariEkle()//grafiğin yanındaki table a konuları ekliyor
+void raporla2::konulariEkle()//grafiğin yanındaki table a konuları ekliyor
 {
     ui->tableGrafikKonular->setRowCount(0);
     QSqlQuery query;
@@ -61,7 +61,7 @@ void kRapor::konulariEkle()//grafiğin yanındaki table a konuları ekliyor
     rbCizelge();
 }
 
-void kRapor::raporTuru(int a)
+void raporla2::raporTuru(int a)
 {
     ui->tableWidget->setRowCount(0);
     if(a==0)
@@ -153,12 +153,12 @@ void kRapor::raporTuru(int a)
     }
 }
 
-void kRapor::kapat()
+void raporla2::kapat()
 {
     close();
 }
 
-void kRapor::sinavDegisti()
+void raporla2::sinavDegisti()
 {
     ui->tableWidget->clear();
     ui->tableWidget->setRowCount(0);
@@ -166,7 +166,7 @@ void kRapor::sinavDegisti()
     ui->cbKistas->setCurrentIndex(0);
 }
 
-void kRapor::rbCizelge()//rb değiştiğinde cizelgelisti güncelliyor
+void raporla2::rbCizelge()//rb değiştiğinde cizelgelisti güncelliyor
 {
     viewCizelge->setColumnCount(0);
     QString seciliKonu;
@@ -200,7 +200,7 @@ void kRapor::rbCizelge()//rb değiştiğinde cizelgelisti güncelliyor
     cizelgeOlustur();
 }
 
-void kRapor::cizelgeOlustur()
+void raporla2::cizelgeOlustur()
 {
     ui->cizelge->setModel(viewCizelge);
     ui->cizelge->setBarScale(0.85);
@@ -209,7 +209,7 @@ void kRapor::cizelgeOlustur()
     ui->cizelge->show();
 }
 
-void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye cizelgede gösterilecek verileri yazıyor
+void raporla2::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye cizelgede gösterilecek verileri yazıyor
 {   //1:krapor1
     //2:krapor2
     //3:sonucrapor1
@@ -263,7 +263,7 @@ void kRapor::cizelgeViewOlustur(int tur, QStringList liste) //viewcizelge ye ciz
     }
 }
 
-void kRapor::raporOlustur(int a)
+void raporla2::raporOlustur(int a)
 {
     ui->tableWidget->clear();
     ui->tableWidget->setRowCount(0);
@@ -291,13 +291,13 @@ void kRapor::raporOlustur(int a)
     }
 }
 
-void kRapor::rapor3ikiser()
+void raporla2::rapor3ikiser()
 {
     QSqlQuery query,query2,query3,query4;
     QStringList sinirlarAlt,sinirlarUst;
     sinirlarAlt<<"0"<<ui->txtYuzdeAlt->text();
     sinirlarUst<<ui->txtYuzdeUst->text()<<"101";
-    ui->label->setText("başarısız: 0 - "+ui->txtYuzdeAlt->text()+"\n"+"başarılı: "+ui->txtYuzdeUst->text()+" - 101");
+    ui->label->setText("başarısız: 0 - "+ui->txtYuzdeAlt->text()+"\n"+"başarılı: "+ui->txtYuzdeUst->text()+" - 100");
     viewCizelge->setRowCount(0);
     viewCizelge->removeColumns(0,viewCizelge->columnCount());
 
@@ -424,7 +424,7 @@ void kRapor::rapor3ikiser()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::rapor3ikiserYazdir(int sayacIlk, int sayac, double yuzde, QString konuBir,QString konuIki, int tur)
+void raporla2::rapor3ikiserYazdir(int sayacIlk, int sayac, double yuzde, QString konuBir,QString konuIki, int tur)
 {
     QString sonuc;
     sonuc=QString("<b>%1 -> %2 </b>").arg(konuBir).arg(konuIki);
@@ -455,13 +455,13 @@ void kRapor::rapor3ikiserYazdir(int sayacIlk, int sayac, double yuzde, QString k
     ui->tableWidget->setCellWidget(currentRow,0,lbl);
 }
 
-void kRapor::rapor3birer()
+void raporla2::rapor3birer()
 {
     QSqlQuery query,query2;
     QStringList sinirlarAlt,sinirlarUst;
     sinirlarAlt<<"0"<<ui->txtYuzdeAlt->text();
     sinirlarUst<<ui->txtYuzdeUst->text()<<"101";
-    ui->label->setText("başarısız: 0 - "+ui->txtYuzdeAlt->text()+"\n"+"başarılı: "+ui->txtYuzdeUst->text()+" - 101");
+    ui->label->setText("başarısız: 0 - "+ui->txtYuzdeAlt->text()+"\n"+"başarılı: "+ui->txtYuzdeUst->text()+" - 100");
     viewCizelge->setRowCount(0);
     viewCizelge->removeColumns(0,viewCizelge->columnCount());
 
@@ -533,7 +533,7 @@ void kRapor::rapor3birer()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-QStringList kRapor::rapor3birerYazdir(QStringList cizelgeListe,int sayac,double yuzde,QString konuIsim,int tur)
+QStringList raporla2::rapor3birerYazdir(QStringList cizelgeListe,int sayac,double yuzde,QString konuIsim,int tur)
 {
     //tur=0 başarısız
     //tur=1 başarılı
@@ -560,7 +560,7 @@ QStringList kRapor::rapor3birerYazdir(QStringList cizelgeListe,int sayac,double 
     return cizelgeListe;
 }
 
-void kRapor::rapor2ikiser()
+void raporla2::rapor2ikiser()
 {
     QSqlQuery query,query2;
     QStringList sinirlar;//basari sinirlari(4 asama var)
@@ -633,7 +633,7 @@ void kRapor::rapor2ikiser()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::rapor2birer()
+void raporla2::rapor2birer()
 {
     QSqlQuery query;
     QStringList sinirlar;//basari sinirlari(4 asama var)
@@ -712,7 +712,7 @@ void kRapor::rapor2birer()
     ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void kRapor::cizelgeYukleme()
+void raporla2::cizelgeYukleme()
 {
     ui->cizelge->axisY()->setRanges(0,100);
     ui->cizelge->axisY()->setTicks(2, 10);
@@ -739,8 +739,9 @@ void kRapor::cizelgeYukleme()
     ui->cizelge->setBackground(QBrush(bg));
 }
 
-void kRapor::kraporOncesi(QString dersIsim)
+void raporla2::raporIkiOncesi(QString dersIsim)
 {
+    this->setWindowTitle("rapor 2-3 ("+dersIsim+")");
     ui->cbSinav->clear();
     ui->label->clear();
     ui->tableWidget->setRowCount(0);
@@ -765,9 +766,8 @@ void kRapor::kraporOncesi(QString dersIsim)
     }
 }
 
-void kRapor::yukleme()
+void raporla2::yukleme()
 {
-    this->setWindowTitle("rapor2");
     ui->tableWidget->setRowCount(0);
     ui->tableWidget->horizontalHeader()->hide();
     ui->tableWidget->verticalHeader()->hide();
@@ -775,10 +775,10 @@ void kRapor::yukleme()
     ui->txtYuzdeUst->setText("101");
     ui->txtYuzde->setText("0");
     ui->cbKistas->addItem("seçim yapın");
-    ui->cbKistas->addItem("rapor2-1");
-    ui->cbKistas->addItem("rapor2-2");
-    ui->cbKistas->addItem("rapor3-1");
-    ui->cbKistas->addItem("rapor3-2");
+    ui->cbKistas->addItem("rapor 2 (birer)");
+    ui->cbKistas->addItem("rapor 2 (ikişer)");
+    ui->cbKistas->addItem("rapor 3 (birer)");
+    ui->cbKistas->addItem("rapor 3 (ikişer)");
     ui->tableGrafikKonular->setRowCount(0);
     ui->tableGrafikKonular->setColumnCount(1);
     ui->tableGrafikKonular->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
@@ -793,7 +793,7 @@ void kRapor::yukleme()
     ui->tableViewCizelge->hide();
 }
 
-kRapor::~kRapor()
+raporla2::~raporla2()
 {
     delete ui;
 }

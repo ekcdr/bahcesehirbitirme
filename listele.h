@@ -5,6 +5,7 @@
 #include <QKeyEvent>
 #include <QTextCodec>
 #include <QtSql>
+#include <QFileDialog>
 
 namespace Ui {
 class listele;
@@ -26,6 +27,7 @@ public:
 
 public slots:
     void kapat();
+    void disariAktar();
     
 private:
 };

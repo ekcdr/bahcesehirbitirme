@@ -7,6 +7,7 @@
 #include <QTextCodec>
 #include <QtSql>
 #include <QCheckBox>
+#include <QFileDialog>
 
 namespace Ui {
     class raporla;
@@ -27,9 +28,8 @@ public:
     QString dersID;
 
 public slots:
-    //void filtreKonu(QString q);//cbKonu nun içeriği --- olursa txtKonuPuan'ı devredışı bırakıyor. ve lblPuanı değiştiriyor
     void sirala(int);
-    void yazdir();
+    void disariAktar();
     void filtreSinav();//rapor1 de sınav değişince konuları dolduruyor
     void konuEtkin();//rapor1 de konu başındaki tik var mı diye bakıp etkinlik durumunu değiştiriyor
 

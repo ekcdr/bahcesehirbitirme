@@ -199,9 +199,9 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="btnYazdir">
+        <widget class="QPushButton" name="btnDisariAktar">
          <property name="text">
-          <string>Yazdır</string>
+          <string>Dışarı Aktar</string>
          </property>
         </widget>
        </item>

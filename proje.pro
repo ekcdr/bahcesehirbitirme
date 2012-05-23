@@ -21,11 +21,11 @@ SOURCES += main.cpp\
     verigirisi.cpp \
     eklesonuc.cpp \
     listele.cpp \
-    krapor.cpp \
     charts/plotterbase.cpp \
     charts/barchartplotter.cpp \
     charts/axisbase.cpp \
-    sinavistatistik.cpp
+    sinavistatistik.cpp \
+    raporla2.cpp
 
 HEADERS  += proje.h \
     ekleogrenci.h \
@@ -36,11 +36,11 @@ HEADERS  += proje.h \
     verigirisi.h \
     eklesonuc.h \
     listele.h \
-    krapor.h \
     charts/plotterbase.h \
     charts/barchartplotter.h \
     charts/axisbase.h \
-    sinavistatistik.h
+    sinavistatistik.h \
+    raporla2.h
 
 FORMS    += proje.ui \
     ekleogrenci.ui \
@@ -51,8 +51,8 @@ FORMS    += proje.ui \
     verigirisi.ui \
     eklesonuc.ui \
     listele.ui \
-    krapor.ui \
-    sinavistatistik.ui
+    sinavistatistik.ui \
+    raporla2.ui
 
 
 

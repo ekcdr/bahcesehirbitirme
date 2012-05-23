@@ -7,6 +7,7 @@ veriGirisi::veriGirisi(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(kapat()));
+    ui->groupBox->setAlignment(Qt::AlignHCenter);
 }
 
 void veriGirisi::keyPressEvent(QKeyEvent *e)

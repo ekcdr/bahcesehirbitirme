@@ -11,13 +11,30 @@ raporla::raporla(QWidget *parent) :
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(close()));
     connect(ui->tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(sirala(int)));
-    connect(ui->btnYazdir,SIGNAL(clicked()),this,SLOT(yazdir()));
+    connect(ui->btnDisariAktar,SIGNAL(clicked()),this,SLOT(disariAktar()));
     connect(ui->cbSinav,SIGNAL(currentIndexChanged(QString)),this,SLOT(filtreSinav()));
     yukleme();
 }
 
-void raporla::yazdir()
+void raporla::disariAktar()
 {
+    QString dosya = QFileDialog::getSaveFileName(this,tr("Dosyayı Kaydet"),QCoreApplication::applicationDirPath()+"/untitled.csv",tr("(*.csv);;Tüm Dosyalar(*.*)"));
+    QFile f(dosya);
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+        for( int r = 0; r < ui->tableWidget->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->tableWidget->columnCount(); ++c )
+            {
+                strList <<"\""+ui->tableWidget->item(r,c)->text()+"\"";
+            }
+            data << strList.join( ";" )+"\n";
+        }
+        f.close();
+    }
 }
 
 void raporla::keyPressEvent(QKeyEvent *e)
@@ -135,7 +152,7 @@ void raporla::konuEtkin()
 
 void raporla::raporBirOncesi(QString dersIsim)
 {
-    setWindowTitle(dersIsim+" raporu");
+    setWindowTitle("rapor 1 ("+dersIsim+")");
     ui->tableWidget->setRowCount(0);
     ui->cbSinav->clear();
     ui->lblOgrenciSayi->clear();

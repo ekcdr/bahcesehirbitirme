@@ -10,6 +10,7 @@ listele::listele(QWidget *parent) :
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
     connect(ui->btnKapat,SIGNAL(clicked()),this,SLOT(kapat()));
+    connect(ui->btnDisariAktar,SIGNAL(clicked()),this,SLOT(disariAktar()));
     ui->tableListe->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 }
 
@@ -26,12 +27,32 @@ void listele::kapat()
     close();
 }
 
+void listele::disariAktar()
+{
+    QString dosya = QFileDialog::getSaveFileName(this,tr("Dosyayı Kaydet"),QCoreApplication::applicationDirPath()+"/untitled.csv",tr("(*.csv);;Tüm Dosyalar(*.*)"));
+    QFile f(dosya);
+    if (f.open(QFile::WriteOnly | QFile::Truncate))
+    {
+        QTextStream data( &f );
+        QStringList strList;
+        for( int r = 0; r < ui->tableListe->rowCount(); ++r )
+        {
+            strList.clear();
+            for( int c = 0; c < ui->tableListe->columnCount(); ++c )
+            {
+                strList <<"\""+ui->tableListe->item(r,c)->text()+"\"";
+            }
+            data << strList.join( ";" )+"\n";
+        }
+        f.close();
+    }
+}
+
 void listele::sinavListeleOncesi(QString dersIsmi)
 {
     setWindowTitle(dersIsmi+" dersi için sınav listesi");
     yuklemeSinav();
 
-    //YANLIŞ  OLABİLİR query
     QSqlQuery query,query2;
     query.exec(QString("select sinavisim,sorusayisi,sinavpuan,sinav.sinavid from sinav,derssinav where derssinav.sinavid=sinav.sinavid and dersid=(select dersid from ders where dersisim='%1')").arg(dersIsmi));
     while(query.next())
@@ -103,7 +124,7 @@ void listele::yuklemeSinav()
     ui->tableListe->setRowCount(0);
     ui->tableListe->setColumnCount(4);
     QStringList baslik;
-    baslik<<tr("İsim")<<tr("Soru Sayisi")<<tr("Toplam Puan")<<tr("Ortalama");
+    baslik<<tr("İsim")<<tr("Soru Sayısı")<<tr("Toplam Puan")<<tr("Ortalama");
     ui->tableListe->setHorizontalHeaderLabels(baslik);
 }
 

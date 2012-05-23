@@ -15,7 +15,7 @@
 #include "verigirisi.h"
 #include "eklesonuc.h"
 #include "listele.h"
-#include "krapor.h"
+#include "raporla2.h"
 #include "sinavistatistik.h"
 
 namespace Ui {
@@ -54,8 +54,9 @@ public slots:
     void ogrenciListele();
     void sinavListele();
     void sonucKapat();
-    void krapor();
+    void raporIki();
     void sinavGrafikGoster();
+    void veritabaniDoldur();//veritabani formunda cb nin değişimine göre tableview ı veritabnı ile dolduruyor
 
 private:
     Ui::proje *ui;
@@ -78,7 +79,7 @@ private:
     veriGirisi formVeriGirisi;
     ekleSonuc formEkleSonuc;
     listele formListele;
-    kRapor formKRapor;
+    raporla2 formRaporla2;
     sinavIstatistik formSinavIstatistik;
 };
 

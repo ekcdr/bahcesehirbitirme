@@ -60,6 +60,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnDisariAktar">
+       <property name="text">
+        <string>Dışarı Aktar</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnIptal">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

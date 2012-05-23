@@ -1,5 +1,5 @@
-#ifndef KRAPOR_H
-#define KRAPOR_H
+#ifndef RAPORLA2_H
+#define RAPORLA2_H
 
 #include <QDialog>
 #include <QtSql>
@@ -10,24 +10,24 @@
 #include "charts/axisbase.h"
 
 namespace Ui {
-class kRapor;
+class raporla2;
 }
 
-class kRapor : public QDialog
+class raporla2 : public QDialog
 {
     Q_OBJECT
     
 public:
-    explicit kRapor(QWidget *parent = 0);
-    ~kRapor();
-    Ui::kRapor *ui;
+    explicit raporla2(QWidget *parent = 0);
+    ~raporla2();
     void keyPressEvent(QKeyEvent *e);
+    Ui::raporla2 *ui;
     bool ilkAcilis;//cbsinav'a sinavlar eklenirken fonk a girmesin
     QString dersid;
     QStandardItemModel *viewCizelge;
     QStandardItemModel *sonuc2Yuzdeler;
     void yukleme();
-    void kraporOncesi(QString);
+    void raporIkiOncesi(QString);
     void rapor2birer();
     void rapor2ikiser();
     void rapor3birer();
@@ -47,9 +47,8 @@ public slots:
     void sinavDegisti();
     void raporTuru(int);
     void rbCizelge();
-
+    
 private:
-
 };
 
-#endif // KRAPOR_H
+#endif // RAPORLA2_H
