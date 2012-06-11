@@ -50,7 +50,7 @@ void listele::disariAktar()
 
 void listele::sinavListeleOncesi(QString dersIsmi)
 {
-    setWindowTitle(dersIsmi+" dersi için sınav listesi");
+    setWindowTitle("sınav listesi ("+dersIsmi+")");
     yuklemeSinav();
 
     QSqlQuery query,query2;
@@ -67,7 +67,7 @@ void listele::sinavListeleOncesi(QString dersIsmi)
         ui->tableListe->setItem(currentRow,2,itm2);
         query2.exec(QString("select avg (toplampuan) from sinavogrenci where sinavid='%1'").arg(query.value(3).toString()));
         query2.next();
-        QTableWidgetItem *itm3=new QTableWidgetItem(query2.value(0).toString());
+        QTableWidgetItem *itm3=new QTableWidgetItem(QString::number(query2.value(0).toDouble(),'f',2));
         ui->tableListe->setItem(currentRow,3,itm3);
         itm0->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         itm1->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
@@ -79,7 +79,7 @@ void listele::sinavListeleOncesi(QString dersIsmi)
 void listele::ogrenciListeleOncesi(QString dersIsmi)
 {
     QSqlQuery query,query2;
-    setWindowTitle(dersIsmi+" dersi için öğrenci listesi");
+    setWindowTitle("öğrenci listesi ("+dersIsmi+")");
     yuklemeOgrenci();
 
     //ogrenci listesine sınavları ekliyor

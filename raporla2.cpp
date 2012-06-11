@@ -374,43 +374,42 @@ void raporla2::rapor3ikiser()
 
                 if(ui->cbKistasYuzde->currentText()==">")
                 {
-                    if(sayac00!=0 && yuzde00>ui->txtYuzde->text().toInt())
+                    if(yuzde00>=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac0Toplam,sayac00,yuzde00,KonuBir,KonuIki,0);
                     }
-                    if(sayac01!=0 && yuzde01>ui->txtYuzde->text().toInt())
+                    if(yuzde01>=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac0Toplam,sayac01,yuzde01,KonuBir,KonuIki,1);
                     }
-                    if(sayac10!=0 && yuzde10>ui->txtYuzde->text().toInt())
+                    if(yuzde10>=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac1Toplam,sayac10,yuzde10,KonuBir,KonuIki,2);
                     }
-                    if(sayac11!=0 && yuzde11>ui->txtYuzde->text().toInt())
+                    if(yuzde11>=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac1Toplam,sayac11,yuzde11,KonuBir,KonuIki,3);
                     }
                 }
                 else if(ui->cbKistasYuzde->currentText()=="<")
                 {
-                    if(sayac00!=0 && yuzde00<ui->txtYuzde->text().toInt())
+                    if(yuzde00<=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac0Toplam,sayac00,yuzde00,KonuBir,KonuIki,0);
                     }
-                    if(sayac01!=0 && yuzde01<ui->txtYuzde->text().toInt())
+                    if(yuzde01<=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac0Toplam,sayac01,yuzde01,KonuBir,KonuIki,1);
                     }
-                    if(sayac10!=0 && yuzde10<ui->txtYuzde->text().toInt())
+                    if(yuzde10<=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac1Toplam,sayac10,yuzde10,KonuBir,KonuIki,2);
                     }
-                    if(sayac11!=0 && yuzde11<ui->txtYuzde->text().toInt())
+                    if(yuzde11<=ui->txtYuzde->text().toInt())
                     {
                         rapor3ikiserYazdir(sayac1Toplam,sayac11,yuzde11,KonuBir,KonuIki,3);
                     }
                 }
-
                 sonuc2Yuzdeler->insertRows(0,1);
                 sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,0),KonuBir);
                 sonuc2Yuzdeler->setData(sonuc2Yuzdeler->index(0,1),KonuIki);
